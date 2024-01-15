@@ -1,0 +1,8 @@
+<!-- switch_item.xml -->
+<Switch
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/switchItem"
+    android:layout_width="32dp"
+    android:layout_height="32dp"
+    android:thumbTint="@color/texto"
+    android:trackTint="@color/verdeClaro"/>

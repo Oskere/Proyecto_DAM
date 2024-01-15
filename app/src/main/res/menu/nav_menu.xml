@@ -1,0 +1,66 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <group>
+        <item
+            android:id="@+id/opciones_mapa"
+            android:title="Opciones de Mapa"
+            app:showAsAction="always"
+            android:enabled="false"
+            android:clickable="false"
+            />
+        <item
+            android:id="@+id/switch_Camaras"
+            android:title="Camaras"
+            android:clickable="true"
+            app:actionLayout="@layout/switch_item" />
+        <item
+            android:id="@+id/switch_Incidencias"
+            android:title="Incidencias"
+            android:clickable="true"
+            app:actionLayout="@layout/switch_item" />
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/filtros"
+            android:title="Lista de Filtros"
+            app:showAsAction="always"
+            android:clickable="false"/>
+        <item
+            android:id="@+id/camList"
+            android:title="Camaras"
+            app:showAsAction="always"
+            android:clickable="true"/>
+        <item
+            android:id="@+id/incList"
+            android:title="Incidencias"
+            app:showAsAction="always"
+            android:clickable="true"/>
+        <item
+            android:id="@+id/graficos"
+            android:title="Graficos"
+            app:showAsAction="always"
+            android:clickable="true"/>
+    </group>
+
+    <group>
+        <item
+            android:id="@+id/idiomas"
+            android:title="Configuración de idioma"
+            app:showAsAction="always"
+            android:clickable="false"/>
+        <item
+            android:id="@+id/esp"
+            android:title="Español"
+            app:showAsAction="always"
+            android:clickable="false"/>
+        <item
+            android:id="@+id/ing"
+            android:title="Inglés"
+            app:showAsAction="always"
+            android:clickable="false"/>
+    </group>
+
+</menu>

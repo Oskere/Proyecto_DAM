@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ViewFlipper android:id="@+id/viewFlipper"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="match_parent" android:layout_width="match_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/azul">
+
+        <!-- Your layout file -->
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="418dp"
+            android:layout_height="532dp"
+            android:layout_marginTop="52dp"
+            android:background="@drawable/formlayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/perfil"
+            tools:ignore="MissingConstraints">
+
+            <!-- Your existing UI elements -->
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputUsuario"
+                android:layout_width="295dp"
+                android:layout_height="54dp"
+                android:hint="@string/usuario"
+                android:textColorHint="@color/texto"
+                app:hintTextColor="@color/texto"
+                app:layout_constraintBottom_toTopOf="@+id/inputContra"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.504"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+                app:layout_constraintVertical_bias="0.458"
+                app:boxStrokeColor="@color/rojo"
+                app:boxBackgroundColor="@color/verdeClaro"
+                app:boxCornerRadiusBottomStart="21dp"
+                app:boxCornerRadiusTopEnd="21dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/texto" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputContra"
+                android:layout_width="295dp"
+                android:layout_height="56dp"
+                android:hint="@string/contra"
+                android:textColorHint="@color/texto"
+                app:hintTextColor="@color/texto"
+                app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.504"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.873"
+                app:boxStrokeColor="@color/rojo"
+                app:boxBackgroundColor="@color/verdeClaro"
+                app:boxCornerRadiusBottomStart="21dp"
+                app:boxCornerRadiusTopEnd="21dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="282dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/texto"
+                    tools:layout_editor_absoluteX="0dp"
+                    tools:layout_editor_absoluteY="0dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="207dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="232dp"
+                android:backgroundTint="@color/verdeClaro"
+                android:text="@string/login"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.502"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+                app:strokeColor="@color/rojo"
+                app:strokeWidth="3dp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                tools:layout_editor_absoluteX="-16dp"
+                tools:layout_editor_absoluteY="16dp">
+
+                <Button
+                    android:id="@+id/login"
+                    android:layout_width="170dp"
+                    android:layout_height="70dp"
+                    android:background="@android:color/transparent"
+                    android:text="@string/login"
+                    android:textSize="20dp"
+                    app:layout_constraintEnd_toStartOf="@+id/registro"
+                    app:layout_constraintHorizontal_bias="0.12"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/strokeView"
+                    android:layout_width="0dp"
+                    android:layout_height="3dp"
+                    android:layout_below="@id/login"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/texto"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.174"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/login"
+                    app:layout_constraintWidth_percent="0.3" />
+
+                <Button
+                    android:id="@+id/registro"
+                    android:layout_width="170dp"
+                    android:layout_height="70dp"
+                    android:background="@android:color/transparent"
+                    android:text="@string/registro"
+                    android:textSize="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.46"
+                    app:layout_constraintStart_toEndOf="@id/login"
+                    tools:layout_editor_absoluteY="0dp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/perfil"
+            android:layout_width="201dp"
+            android:layout_height="198dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.05"
+            app:srcCompat="@drawable/user" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/azul">
+
+        <!-- Your layout file -->
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="418dp"
+            android:layout_height="532dp"
+            android:layout_marginTop="52dp"
+            android:background="@drawable/formlayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/perfilRegistro"
+            tools:ignore="MissingConstraints">
+
+            <!-- Your existing UI elements -->
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputUsuarioRegistro"
+                android:layout_width="295dp"
+                android:layout_height="54dp"
+                android:hint="@string/usuario"
+                android:textColorHint="@color/texto"
+                app:boxBackgroundColor="@color/verdeClaro"
+                app:boxCornerRadiusBottomStart="21dp"
+                app:boxCornerRadiusTopEnd="21dp"
+                app:boxStrokeColor="@color/rojo"
+                app:hintTextColor="@color/texto"
+                app:layout_constraintBottom_toTopOf="@+id/inputContraRegistro"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.504"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayoutRegistro"
+                app:layout_constraintVertical_bias="0.811">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/texto" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputMailRegistro"
+                android:layout_width="295dp"
+                android:layout_height="54dp"
+                android:hint="@string/email"
+                android:textColorHint="@color/texto"
+                app:boxBackgroundColor="@color/verdeClaro"
+                app:boxCornerRadiusBottomStart="21dp"
+                app:boxCornerRadiusTopEnd="21dp"
+                app:boxStrokeColor="@color/rojo"
+                app:hintTextColor="@color/texto"
+                app:layout_constraintBottom_toTopOf="@+id/inputUsuarioRegistro"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.504"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayoutRegistro"
+                app:layout_constraintVertical_bias="0.608">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/texto" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/inputContraRegistro"
+                android:layout_width="295dp"
+                android:layout_height="56dp"
+                android:hint="@string/contra"
+                android:textColorHint="@color/texto"
+                app:boxBackgroundColor="@color/verdeClaro"
+                app:boxCornerRadiusBottomStart="21dp"
+                app:boxCornerRadiusTopEnd="21dp"
+                app:boxStrokeColor="@color/rojo"
+                app:hintTextColor="@color/texto"
+                app:layout_constraintBottom_toTopOf="@+id/btnRegistro"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.504"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.965">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="282dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/texto"
+                    tools:layout_editor_absoluteX="0dp"
+                    tools:layout_editor_absoluteY="0dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnRegistro"
+                android:layout_width="207dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="244dp"
+                android:backgroundTint="@color/verdeClaro"
+                android:text="@string/login"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.502"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayoutRegistro"
+                app:strokeColor="@color/rojo"
+                app:strokeWidth="3dp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayoutRegistro"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                tools:layout_editor_absoluteX="-16dp"
+                tools:layout_editor_absoluteY="16dp">
+
+                <Button
+                    android:id="@+id/loginRegistro"
+                    android:layout_width="170dp"
+                    android:layout_height="70dp"
+                    android:background="@android:color/transparent"
+                    android:text="@string/login"
+                    android:textSize="20dp"
+                    app:layout_constraintEnd_toStartOf="@+id/registroRegistro"
+                    app:layout_constraintHorizontal_bias="0.12"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/strokeViewRegistro"
+                    android:layout_width="0dp"
+                    android:layout_height="3dp"
+                    android:layout_below="@id/loginRegistro"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/texto"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.846"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/registroRegistro"
+                    app:layout_constraintWidth_percent="0.3" />
+
+                <Button
+                    android:id="@+id/registroRegistro"
+                    android:layout_width="170dp"
+                    android:layout_height="70dp"
+                    android:background="@android:color/transparent"
+                    android:text="@string/registro"
+                    android:textSize="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.46"
+                    app:layout_constraintStart_toEndOf="@id/loginRegistro"
+                    tools:layout_editor_absoluteY="0dp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/perfilRegistro"
+            android:layout_width="201dp"
+            android:layout_height="198dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.05"
+            app:srcCompat="@drawable/perfil" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ViewFlipper>
