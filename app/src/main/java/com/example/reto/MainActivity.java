@@ -99,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 } else if (id == R.id.camList || id == R.id.incList || id == R.id.graficos) {
                     // Handle filter options
+                    Intent lista = new Intent(MainActivity.this, listaCamaras.class);
+                    startActivity(lista);
                     handleFilterOptionClick(id);
                 } else if (id == R.id.esp || id == R.id.ing) {
                     // Handle language options
@@ -116,9 +118,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void handleLanguageOptionClick(int id) {
+
     }
 
     private void handleFilterOptionClick(int id) {
+
     }
 
     @Override
