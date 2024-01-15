@@ -8,4 +8,8 @@
     <string name="login"><b>Inciar Sesión</b></string>
     <string name="registro"><b>Registrarse</b></string>
     <string name="email">E-mail</string>
+    <string name="swithcCamaras">Mostrar camaras</string>
+    <string name="swithcIncidencias">Mostrar incidencias</string>
+    <string name="camaras">Camaras</string>
+    <string name="incidencias">Incidencias</string>
 </resources>

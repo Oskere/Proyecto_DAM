@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,12 +15,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.navigation.NavigationView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private MapView mapView;
@@ -41,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-        TextView cerrarSesion = navigationView.findViewById(R.id.nav_footer_textview);
+        LinearLayout cerrarSesion = findViewById(R.id.cerrarSesion);
 
         cerrarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,14 +110,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Toast toast = Toast.makeText(MainActivity.this, menuItem.getTitle() + " ocultas", duration);
                         toast.show();
                     }
-                } else if (id == R.id.camList || id == R.id.incList || id == R.id.graficos) {
+                } else if (id == R.id.camList ) {
                     // Handle filter options
                     Intent lista = new Intent(MainActivity.this, listaCamaras.class);
+                    lista.putExtra("titulo","Lista de Camaras:");
                     startActivity(lista);
-                    handleFilterOptionClick(id);
+                    //handleFilterOptionClick(id);
                 } else if (id == R.id.esp || id == R.id.ing) {
-                    // Handle language options
                     handleLanguageOptionClick(id);
+                } else if (id == R.id.incList){
+
+                } else if (id == R.id.graficos) {
+
                 }
                 // Add more conditions for other menu items
 
@@ -138,6 +155,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         // Mover la cámara a la posición inicial
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(INITIAL_POSITION, 9));
+        // Realizar la solicitud a la API y añadir marcadores
+        loadMarkersFromApi(googleMap);
     }
 
     @Override
@@ -163,5 +182,82 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onLowMemory();
         mapView.onLowMemory();
     }
+
+    private void loadMarkersFromApi(final GoogleMap googleMap) {
+        // Primer endpoint
+        String apiUrl1 = "https://api.euskadi.eus/traffic/v1.0/incidences";
+        JsonObjectRequest jsonObjectRequest1 = new JsonObjectRequest(
+                Request.Method.GET,
+                apiUrl1,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray incidences = response.getJSONArray("incidences");
+                            for (int i = 0; i < incidences.length(); i++) {
+                                JSONObject incidence = incidences.getJSONObject(i);
+                                double latitude = incidence.getDouble("latitude");
+                                double longitude = incidence.getDouble("longitude");
+                                String title = incidence.getString("cause");
+                                LatLng markerLatLng = new LatLng(latitude, longitude);
+                                googleMap.addMarker(new MarkerOptions()
+                                        .position(markerLatLng)
+                                        .title(title)
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.incidenceicon)));
+                                Log.d("Marcador", "Latitud: " + latitude + ", Longitud: " + longitude + ", cause: " + title);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.this, "Error al cargar los datos del primer endpoint", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // Segundo endpoint
+        String apiUrl2 = "https://api.euskadi.eus/traffic/v1.0/cameras";
+        JsonObjectRequest jsonObjectRequest2 = new JsonObjectRequest(
+                Request.Method.GET,
+                apiUrl2,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray cameras = response.getJSONArray("cameras");
+                            for (int i = 0; i < cameras.length(); i++) {
+                                JSONObject camera = cameras.getJSONObject(i);
+                                double latitude = camera.getDouble("latitude");
+                                double longitude = camera.getDouble("longitude");
+                                String title = camera.getString("cameraName");
+                                LatLng markerLatLng = new LatLng(latitude, longitude);
+                                googleMap.addMarker(new MarkerOptions()
+                                        .position(markerLatLng)
+                                        .title(title));
+                                Log.d("Marcador", "Latitud: " + latitude + ", Longitud: " + longitude + ", Título: " + title);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.this, "Error al cargar los datos del segundo endpoint", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // Añadir las solicitudes a la cola de Volley
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonObjectRequest1);
+        requestQueue.add(jsonObjectRequest2);
+    }
+
 }
 

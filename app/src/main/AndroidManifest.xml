@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity"/>
-        <activity android:name=".listaFiltros"/>
+        <activity android:name=".listaCamaras"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCK0rpJHMnrPnq3gHmdAs-SmoVOiUKOzKA" />
