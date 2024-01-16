@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -34,11 +33,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private MapView mapView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private static final LatLng INITIAL_POSITION = new LatLng(43.008952, -2.472580);
+
+    private ArrayList<Camara> cameraList = new ArrayList<>();
+    private ArrayList<Incidencia> incidenceList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,45 +87,32 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                // Manejar clic en elementos del menú aquí
-                // Por ejemplo, cambiar fragmento o iniciar una nueva actividad
-                // Get the ID of the clicked menu item
                 int id = menuItem.getItemId();
-                // Handle the click event based on the ID
                 if (id == R.id.switch_Camaras || id == R.id.switch_Incidencias) {
-                    // Find the switch in the action view of the menu item
                     View actionView = menuItem.getActionView();
                     Switch switchView = actionView.findViewById(R.id.switchItem);
-
-                    // Toggle the state of the switch
                     switchView.setChecked(!switchView.isChecked());
 
-                    // Handle the switch state change as needed
                     if (switchView.isChecked()) {
-                        // Switch is ON
-                        // Handle the action when the switch is ON
                         int duration = Toast.LENGTH_SHORT;
                         Toast toast = Toast.makeText(MainActivity.this, menuItem.getTitle() + " mostradas", duration);
                         toast.show();
                     } else {
-                        // Switch is OFF
-                        // Handle the action when the switch is OFF
                         int duration = Toast.LENGTH_SHORT;
                         Toast toast = Toast.makeText(MainActivity.this, menuItem.getTitle() + " ocultas", duration);
                         toast.show();
                     }
                 } else if (id == R.id.camList ) {
-                    // Handle filter options
                     Intent lista = new Intent(MainActivity.this, listaCamaras.class);
                     lista.putExtra("titulo","Lista de Camaras:");
                     startActivity(lista);
-                    //handleFilterOptionClick(id);
                 } else if (id == R.id.esp || id == R.id.ing) {
                     handleLanguageOptionClick(id);
                 } else if (id == R.id.incList){
 
                 } else if (id == R.id.graficos) {
-
+                    Intent graficos = new Intent(MainActivity.this, Graficos.class);
+                    startActivity(graficos);
                 }
                 // Add more conditions for other menu items
 
@@ -200,12 +191,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 double latitude = incidence.getDouble("latitude");
                                 double longitude = incidence.getDouble("longitude");
                                 String title = incidence.getString("cause");
+                                String id = incidence.getString("incidenceId");
+                                String province = incidence.getString("province");
+                                String carRegistration = incidence.getString("carRegistration");
+                                String incidenceLevel = incidence.getString("incidenceLevel");
+                                String road = incidence.getString("road");
+                                String incidenceType = incidence.getString("incidenceType");
                                 LatLng markerLatLng = new LatLng(latitude, longitude);
                                 googleMap.addMarker(new MarkerOptions()
                                         .position(markerLatLng)
                                         .title(title)
                                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.incidenceicon)));
-                                Log.d("Marcador", "Latitud: " + latitude + ", Longitud: " + longitude + ", cause: " + title);
+                                Incidencia incidenceObject = new Incidencia(latitude, longitude, title, id, province, carRegistration, incidenceLevel, road, incidenceType);
+                                incidenceList.add(incidenceObject);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -235,11 +233,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 double latitude = camera.getDouble("latitude");
                                 double longitude = camera.getDouble("longitude");
                                 String title = camera.getString("cameraName");
+                                String cameraId = camera.getString("cameraId");
+                                String cameraRoad = camera.getString("road");
+                                String kilometer = camera.getString("kilometer");
+                                String address = camera.getString("address");
                                 LatLng markerLatLng = new LatLng(latitude, longitude);
                                 googleMap.addMarker(new MarkerOptions()
                                         .position(markerLatLng)
                                         .title(title));
-                                Log.d("Marcador", "Latitud: " + latitude + ", Longitud: " + longitude + ", Título: " + title);
+                                Camara cameraObject = new Camara(latitude, longitude, title, cameraId, cameraRoad, kilometer, address);
+                                cameraList.add(cameraObject);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -260,4 +263,3 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 }
-

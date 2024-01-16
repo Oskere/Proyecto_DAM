@@ -12,4 +12,10 @@
     <string name="swithcIncidencias">Mostrar incidencias</string>
     <string name="camaras">Camaras</string>
     <string name="incidencias">Incidencias</string>
+    <string name="provincias">Provincia:</string>
+    <string-array name="location_array">
+        <item>Gipuzkoa</item>
+        <item>Araba</item>
+        <item>Bizkaia</item>
+    </string-array>
 </resources>
