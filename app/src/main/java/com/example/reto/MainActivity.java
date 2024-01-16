@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Toast toast = Toast.makeText(MainActivity.this, menuItem.getTitle() + " ocultas", duration);
                         toast.show();
                     }
-                } else if (id == R.id.camList || id == R.id.incList || id == R.id.graficos) {
+                } else if (id == R.id.camList || id == R.id.incList) {
                     // Handle filter options
                     Intent lista = new Intent(MainActivity.this, listaCamaras.class);
                     startActivity(lista);
@@ -105,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } else if (id == R.id.esp || id == R.id.ing) {
                     // Handle language options
                     handleLanguageOptionClick(id);
+                } else if (id == R.id.graficos) {
+                    Intent graficos = new Intent(MainActivity.this, Graficos.class);
+                    startActivity(graficos);
                 }
                 // Add more conditions for other menu items
 
