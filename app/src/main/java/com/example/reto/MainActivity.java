@@ -2,6 +2,7 @@ package com.example.reto;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -23,7 +24,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -34,8 +34,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
-import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.module.AppGlideModule;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +52,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private ArrayList<Camara> cameraList = new ArrayList<>();
     private ArrayList<Incidencia> incidenceList = new ArrayList<>();
+
+    private int currentPageApi1 = 1;
+    private int currentPageApi2 = 1;
+    private boolean hasMorePagesApi1 = true;
+    private boolean hasMorePagesApi2 = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -237,7 +240,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true); // Habilita JavaScript si es necesario
 
-        webView.loadUrl(imageUrl);
+        String html = "<html><body><img src=\"" + imageUrl + "\" width=\"100%\" height=\"100%\"></body></html>";
+        webView.loadData(html, "text/html", "UTF-8");
 
         // ...
 
@@ -287,11 +291,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void loadMarkersFromApi(final GoogleMap googleMap) {
-        // Primer endpoint
+            // Primera solicitud a la API para incidencias
+            loadIncidenciasFromApi(googleMap);
+
+            // Segunda solicitud a la API para cámaras
+            loadCamarasFromApi(googleMap);
+    }
+
+    private void loadIncidenciasFromApi(final GoogleMap googleMap) {
+        if (!hasMorePagesApi1) {
+            // Si no hay más páginas, salir del método
+            return;
+        }
+
         String apiUrl1 = "https://api.euskadi.eus/traffic/v1.0/incidences";
         JsonObjectRequest jsonObjectRequest1 = new JsonObjectRequest(
                 Request.Method.GET,
-                apiUrl1,
+                apiUrl1 + "?_page=" + currentPageApi1,
                 null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -302,22 +318,45 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 JSONObject incidence = incidences.getJSONObject(i);
                                 double latitude = incidence.getDouble("latitude");
                                 double longitude = incidence.getDouble("longitude");
-                                String title = incidence.getString("cause");
-                                String id = incidence.getString("incidenceId");
-                                String province = incidence.getString("province");
-                                String carRegistration = incidence.getString("carRegistration");
-                                String incidenceLevel = incidence.getString("incidenceLevel");
-                                String road = incidence.getString("road");
-                                String incidenceType = incidence.getString("incidenceType");
-                                LatLng markerLatLng = new LatLng(latitude, longitude);
-                                Marker marker = googleMap.addMarker(new MarkerOptions()
-                                        .position(markerLatLng)
-                                        .title(title)
-                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.incidenceicon)));
-                                Incidencia incidenceObject = new Incidencia(latitude, longitude, title, id, province, carRegistration, incidenceLevel, road, incidenceType);
-                                marker.setTag(incidenceObject);
-                                incidenceList.add(incidenceObject);
+
+                                // Verifica si la latitud y la longitud son diferentes de 0 antes de añadir el marcador
+                                if (latitude != 0 && longitude != 0) {
+                                    String title = incidence.getString("cause");
+                                    String id = incidence.getString("incidenceId");
+                                    String province = incidence.getString("province");
+                                    String carRegistration = incidence.getString("carRegistration");
+                                    String incidenceLevel = incidence.getString("incidenceLevel");
+                                    String road = incidence.getString("road");
+                                    String incidenceType = incidence.getString("incidenceType");
+
+                                    LatLng markerLatLng = new LatLng(latitude, longitude);
+                                    Marker marker = googleMap.addMarker(new MarkerOptions()
+                                            .position(markerLatLng)
+                                            .title(title)
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.incidenceicon)));
+                                    Incidencia incidenceObject = new Incidencia(latitude, longitude, title, id, province, carRegistration, incidenceLevel, road, incidenceType);
+                                    marker.setTag(incidenceObject);
+                                    incidenceList.add(incidenceObject);
+                                }
                             }
+
+                            // Asegúrate de actualizar currentPageApi1 después de procesar la respuesta
+                            currentPageApi1++;
+                            Log.d("Pagina", "onResponse: "+currentPageApi1);
+
+                            int num = 8;
+                            Log.d("Paginas Totales", "onResponse: "+num);
+                            if (!(num - currentPageApi1 > 0)) {
+                                hasMorePagesApi1 = false;
+                                return;
+                            }
+
+                            // Verifica si hay más páginas según la información de la respuesta
+
+
+                            // Realiza la siguiente solicitud de página si es necesario
+                            loadIncidenciasFromApi(googleMap);
+                            Log.d("Mas paginas", "onResponse: "+hasMorePagesApi1);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -330,11 +369,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
 
-        // Segundo endpoint
+        // Añadir la solicitud a la cola de Volley
+        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
+        requestQueue.add(jsonObjectRequest1);
+    }
+
+    private void loadCamarasFromApi(final GoogleMap googleMap) {
+        if (!hasMorePagesApi2) {
+            // Si no hay más páginas, salir del método
+            return;
+        }
+
+        // Segunda solicitud a la API para cámaras
         String apiUrl2 = "https://api.euskadi.eus/traffic/v1.0/cameras";
+        Log.d("Request OPIO", apiUrl2+"?_page="+currentPageApi2);
         JsonObjectRequest jsonObjectRequest2 = new JsonObjectRequest(
                 Request.Method.GET,
-                apiUrl2,
+                apiUrl2 + "?_page=" + currentPageApi2,
                 null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -352,18 +403,40 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 double longitude = Double.parseDouble(latLng[1]);
                                 String title = camera.getString("cameraName");
                                 String cameraId = camera.getString("cameraId");
-                                String cameraRoad = camera.getString("road");
-                                String kilometer = camera.getString("kilometer");
-                                String address = camera.getString("address");
-                                String imageUrl = camera.optString("urlImage","");
+                                String cameraRoad = camera.optString("road","");
+                                String kilometer = camera.optString("kilometer","");
+                                String address = camera.optString("address","");
+                                String imageUrl = camera.optString("urlImage", "");
+                                imageUrl = imageUrl.replace("http://", "https://");
                                 LatLng markerLatLng = new LatLng(latitude, longitude);
                                 Camara cameraObject = new Camara(latitude, longitude, title, cameraId, cameraRoad, kilometer, address, imageUrl);
                                 Marker marker = googleMap.addMarker(new MarkerOptions()
                                         .position(markerLatLng)
-                                        .title(title));
+                                        .title(title)
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.camara_marker)));
                                 marker.setTag(cameraObject);
+                                Log.d("Marcador", "ID camara: "+cameraId);
                                 cameraList.add(cameraObject);
                             }
+
+                            currentPageApi2++;
+                            Log.d("Pagina API 2", "onResponse: "+currentPageApi2);
+
+                            int num = 25;
+
+                            if (!(num - currentPageApi2 >= 0)) {
+                                hasMorePagesApi2 = false;
+                                return;
+                            }
+                            Log.d("Paginas Totales API 2", "onResponse: "+num);
+
+                            // Verifica si hay más páginas según la información de la respuesta
+
+
+                            // Realiza la siguiente solicitud de página si es necesario
+                            Log.d("Mas paginas", "onResponse: "+hasMorePagesApi2);
+                            loadCamarasFromApi(googleMap);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -376,9 +449,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                 });
 
-        // Añadir las solicitudes a la cola de Volley
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(jsonObjectRequest1);
+        // Añadir la solicitud a la cola de Volley
+        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(jsonObjectRequest2);
     }
 
