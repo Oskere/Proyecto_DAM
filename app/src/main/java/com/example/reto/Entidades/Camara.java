@@ -1,6 +1,8 @@
-package com.example.reto;
+package com.example.reto.Entidades;
 
-public class Camara {
+import java.io.Serializable;
+
+public class Camara implements Serializable {
 
     private double latitude;
     private double longitude;

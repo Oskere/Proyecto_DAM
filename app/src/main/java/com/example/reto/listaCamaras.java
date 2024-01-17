@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.reto.Entidades.Camara;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,16 +27,18 @@ public class listaCamaras extends AppCompatActivity {
         titulo.setText(intent.getStringExtra("titulo"));
 
         // Crear datos de ejemplo
-        List<camaras> cameraList = new ArrayList<camaras>();
-        cameraList.add(new camaras("75", "2", "CCTV 232 - Cámara DOMO 232", "4792953.64", "507650.15", "N - 637", "016+500", "Cruces", "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fes%2Ffotos%2Ftr%25C3%25A1fico&psig=AOvVaw3vofCuo3T7LUvBrCE4fuvF&ust=1705396906934000&source=images&cd=vfe&ved=0CBIQjRxqFwoTCLCEpdiI34MDFQAAAAAdAAAAABAE"));
+        List<Camara> cameraList = (List<Camara>) intent.getSerializableExtra("cameraList");
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
+        cameraAdapter adapter = new cameraAdapter(this,cameraList);
+        recyclerView.setAdapter(adapter);
+
 
         // Configurar el RecyclerView y el adaptador
-        RecyclerView recyclerView = findViewById(R.id.recycler);
+        recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        cameraAdapter adapter = new cameraAdapter(this, cameraList);
-        recyclerView.setAdapter(adapter);
 
         // Agregar un OnClickListener al ImageView
         ImageView imageView = findViewById(R.id.imageView);

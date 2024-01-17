@@ -10,14 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.reto.Entidades.Camara;
+
 import java.util.List;
 
 public class cameraAdapter extends RecyclerView.Adapter<cameraAdapter.ViewHolder> {
 
-    private List<camaras> cameraList;
+    private List<Camara> cameraList;
     private LayoutInflater inflater;
 
-    public cameraAdapter(Context context, List<camaras> cameraList) {
+    public cameraAdapter(Context context, List<Camara> cameraList) {
         this.inflater = LayoutInflater.from(context);
         this.cameraList = cameraList;
     }
@@ -31,7 +33,7 @@ public class cameraAdapter extends RecyclerView.Adapter<cameraAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        camaras camera = cameraList.get(position);
+        Camara camera = cameraList.get(position);
         holder.bind(camera);
     }
 
@@ -52,8 +54,8 @@ public class cameraAdapter extends RecyclerView.Adapter<cameraAdapter.ViewHolder
             imagenImageView = itemView.findViewById(R.id.imagenImageView);
         }
 
-        public void bind(camaras camera) {
-            nombreTextView.setText(camera.getCameraName());
+        public void bind(Camara camera) {
+            nombreTextView.setText(camera.getTitle());
             kilometerTextView.setText(camera.getKilometer());
             imagenImageView.setImageDrawable(ContextCompat.getDrawable(itemView.getContext(), R.drawable.exit));
         }

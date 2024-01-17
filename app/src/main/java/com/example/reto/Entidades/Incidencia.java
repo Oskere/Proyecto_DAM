@@ -1,6 +1,8 @@
-package com.example.reto;
+package com.example.reto.Entidades;
 
-public class Incidencia {
+import java.io.Serializable;
+
+public class Incidencia implements Serializable {
 
     private double latitude;
     private double longitude;

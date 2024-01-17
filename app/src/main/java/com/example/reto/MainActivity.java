@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -24,6 +23,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.reto.Entidades.Camara;
+import com.example.reto.Entidades.Incidencia;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -40,7 +41,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import org.locationtech.proj4j.*;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } else if (id == R.id.camList ) {
                     Intent lista = new Intent(MainActivity.this, listaCamaras.class);
                     lista.putExtra("titulo","Lista de Camaras:");
+                    lista.putExtra("cameraList", cameraList);
                     startActivity(lista);
                 } else if (id == R.id.esp || id == R.id.ing) {
                     handleLanguageOptionClick(id);
@@ -248,8 +249,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Mostrar el BottomSheetDialog
         bottomSheetDialog.show();
     }
-
-
 
     private void showIncidenciaDetails(Incidencia incidencia) {
         // Crear un BottomSheetDialog
