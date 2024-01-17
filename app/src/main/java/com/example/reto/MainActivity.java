@@ -2,11 +2,14 @@ package com.example.reto;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -20,22 +23,30 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
+import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.module.AppGlideModule;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.locationtech.proj4j.*;
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private MapView mapView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
@@ -146,6 +157,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         // Mover la cámara a la posición inicial
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(INITIAL_POSITION, 9));
+        // Registrar la actividad como el listener de clics en marcadores
+        googleMap.setOnMarkerClickListener(this);
         // Realizar la solicitud a la API y añadir marcadores
         loadMarkersFromApi(googleMap);
     }
@@ -168,10 +181,109 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapView.onDestroy();
     }
 
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         mapView.onLowMemory();
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        // Obtener el objeto asociado al marcador
+        Object associatedObject = marker.getTag();
+
+        // Verificar el tipo del objeto y mostrar detalles según sea necesario
+        if (associatedObject instanceof Incidencia) {
+            Incidencia incidencia = (Incidencia) associatedObject;
+            showIncidenciaDetails(incidencia);
+        } else if (associatedObject instanceof Camara) {
+            Camara camara = (Camara) associatedObject;
+            showCamaraDetails(camara);
+        }
+
+        return true;
+    }
+
+    private void showCamaraDetails(Camara camara) {
+        // Crear un BottomSheetDialog
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+
+        // Inflar el diseño del contenido del marcador
+        View view = getLayoutInflater().inflate(R.layout.camara_menu, null);
+        bottomSheetDialog.setContentView(view);
+
+        // ...
+
+        // Obtener los datos del marcador
+        String title = camara.getTitle();
+        String id = camara.getCameraId();
+        String carretera = camara.getCameraRoad();
+        String provincia = camara.getAddress();
+        String imageUrl = camara.getImageUrl();
+
+        TextView titulo = view.findViewById(R.id.tituloCamara);
+        titulo.setText(title);
+        TextView idCam = view.findViewById(R.id.idCamaraVar);
+        idCam.setText(id);
+        TextView carreteraCam = view.findViewById(R.id.carreteraCamaraVar);
+        carreteraCam.setText(carretera);
+        TextView provinciaCam = view.findViewById(R.id.localidadCamaraVar);
+        provinciaCam.setText(provincia);
+
+
+        // Configura las opciones del WebView
+        WebView webView = view.findViewById(R.id.imagenCamaraVar);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true); // Habilita JavaScript si es necesario
+
+        webView.loadUrl(imageUrl);
+
+        // ...
+
+        // Mostrar el BottomSheetDialog
+        bottomSheetDialog.show();
+    }
+
+
+
+    private void showIncidenciaDetails(Incidencia incidencia) {
+        // Crear un BottomSheetDialog
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+
+        // Inflar el diseño del contenido del marcador
+        View view = getLayoutInflater().inflate(R.layout.incidencia_menu, null);
+        bottomSheetDialog.setContentView(view);
+
+        // Obtener referencias a las vistas en el diseño
+        TextView titleTextView = view.findViewById(R.id.tituloIncidencia);
+        TextView textViewCarretera = view.findViewById(R.id.carreteraIncidenciaVar);
+        TextView textViewId = view.findViewById(R.id.idIncidenciaVar);
+        TextView textViewCoche = view.findViewById(R.id.carRegistrationVar);
+        TextView textViewProvincia = view.findViewById(R.id.localidadIncidenciaVar);
+
+        // Obtener los datos del marcador
+        String title = incidencia.getTitle();
+        String id = incidencia.getId();
+        String coche = incidencia.getCarRegistration();
+        String carretera = incidencia.getRoad();
+        String provincia = incidencia.getProvince();
+        // Puedes obtener datos adicionales del marcador utilizando la lista de cámaras e incidencias
+        // según sea necesario
+
+
+        // Configurar las vistas con los datos del marcador
+        titleTextView.setText(title);
+        textViewCarretera.setText(carretera);
+        textViewId.setText(id);
+        textViewCoche.setText(coche);
+        textViewProvincia.setText(provincia);
+
+
+        // Configurar otras vistas con datos adicionales si es necesario
+
+        // Mostrar el BottomSheetDialog
+        bottomSheetDialog.show();
     }
 
     private void loadMarkersFromApi(final GoogleMap googleMap) {
@@ -198,11 +310,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 String road = incidence.getString("road");
                                 String incidenceType = incidence.getString("incidenceType");
                                 LatLng markerLatLng = new LatLng(latitude, longitude);
-                                googleMap.addMarker(new MarkerOptions()
+                                Marker marker = googleMap.addMarker(new MarkerOptions()
                                         .position(markerLatLng)
                                         .title(title)
                                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.incidenceicon)));
                                 Incidencia incidenceObject = new Incidencia(latitude, longitude, title, id, province, carRegistration, incidenceLevel, road, incidenceType);
+                                marker.setTag(incidenceObject);
                                 incidenceList.add(incidenceObject);
                             }
                         } catch (JSONException e) {
@@ -230,18 +343,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             JSONArray cameras = response.getJSONArray("cameras");
                             for (int i = 0; i < cameras.length(); i++) {
                                 JSONObject camera = cameras.getJSONObject(i);
-                                double latitude = camera.getDouble("latitude");
-                                double longitude = camera.getDouble("longitude");
+                                double utmX = camera.getDouble("longitude");
+                                double utmY = camera.getDouble("latitude");
+
+                                // Convierte las coordenadas UTM a latitud y longitud
+                                String[] latLng = convertCoordinates(utmX, utmY);
+                                double latitude = Double.parseDouble(latLng[0]);
+                                double longitude = Double.parseDouble(latLng[1]);
                                 String title = camera.getString("cameraName");
                                 String cameraId = camera.getString("cameraId");
                                 String cameraRoad = camera.getString("road");
                                 String kilometer = camera.getString("kilometer");
                                 String address = camera.getString("address");
+                                String imageUrl = camera.optString("urlImage","");
                                 LatLng markerLatLng = new LatLng(latitude, longitude);
-                                googleMap.addMarker(new MarkerOptions()
+                                Camara cameraObject = new Camara(latitude, longitude, title, cameraId, cameraRoad, kilometer, address, imageUrl);
+                                Marker marker = googleMap.addMarker(new MarkerOptions()
                                         .position(markerLatLng)
                                         .title(title));
-                                Camara cameraObject = new Camara(latitude, longitude, title, cameraId, cameraRoad, kilometer, address);
+                                marker.setTag(cameraObject);
                                 cameraList.add(cameraObject);
                             }
                         } catch (JSONException e) {
@@ -260,6 +380,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(jsonObjectRequest1);
         requestQueue.add(jsonObjectRequest2);
+    }
+
+    public String[] convertCoordinates(double longitude, double latitude){
+        // UTM coordinates for Zone 30T
+        double easting = longitude; // Replace with your UTM easting value
+        double northing = latitude; // Replace with your UTM northing value
+        int zone = 30;
+
+        // Define the UTM projection for Zone 30T
+        String utmDefinition = "+proj=utm +zone=" + zone + " +ellps=WGS84";
+        CRSFactory crsFactory = new CRSFactory();
+        CoordinateReferenceSystem utmCrs = crsFactory.createFromParameters("UTM", utmDefinition);
+
+        // Define the WGS84 geographic coordinate system
+        String wgs84Definition = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs";
+        CoordinateReferenceSystem wgs84Crs = crsFactory.createFromParameters("WGS84", wgs84Definition);
+
+        // Create a CoordinateTransformFactory and create a CoordinateTransform
+        CoordinateTransformFactory ctFactory = new CoordinateTransformFactory();
+        CoordinateTransform utmToLatLon = ctFactory.createTransform(utmCrs, wgs84Crs);
+
+        // Transform UTM coordinates to latitude and longitude
+        ProjCoordinate utmCoord = new ProjCoordinate(easting, northing);
+        ProjCoordinate latLonCoord = new ProjCoordinate();
+        utmToLatLon.transform(utmCoord, latLonCoord);
+
+        String[] coordCamaras = new String[2]; // Tamaño 2 para latitud y longitud
+        coordCamaras[0] = String.valueOf(latLonCoord.y); // Latitud
+        coordCamaras[1] = String.valueOf(latLonCoord.x); // Longitud
+
+        return coordCamaras;
     }
 
 }

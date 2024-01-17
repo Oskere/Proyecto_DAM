@@ -13,6 +13,14 @@
     <string name="camaras">Camaras</string>
     <string name="incidencias">Incidencias</string>
     <string name="provincias">Provincia:</string>
+    <string name="idIncidencia"><b>ID de la incidencia:</b></string>
+    <string name="registroCoche"><b>Coche registrado en:</b></string>
+    <string name="carreteraIncidencia"><b>Carretera Afectada:</b></string>
+    <string name="localidadIncidencia"><b>Localidad de la incidencia:</b></string>
+    <string name="idCamara"><b>ID de la camara: </b></string>
+    <string name="localidadCamara"><b>Localidad de la camara: </b></string>
+    <string name="imagenCamara"><b>Imagen de la camara:</b></string>
+    <string name="carreteraCamara"><b>Carretera vigilada:</b></string>
     <string-array name="location_array">
         <item>Gipuzkoa</item>
         <item>Araba</item>

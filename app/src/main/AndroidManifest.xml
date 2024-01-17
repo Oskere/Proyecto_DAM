@@ -28,5 +28,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCK0rpJHMnrPnq3gHmdAs-SmoVOiUKOzKA" />
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

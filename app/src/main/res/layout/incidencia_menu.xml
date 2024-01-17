@@ -1,0 +1,149 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/verdeClaro">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/standard_bottom_sheet"
+        style="@style/Widget.Material3.BottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/verdeClaro"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <!-- Drag handle for accessibility -->
+
+        <!-- Bottom sheet contents. -->
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:id="@+id/drag_handle"
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+            android:background="@color/verdeClaro"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tituloIncidencia"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Incidencia"
+            android:textColor="@color/texto"
+            android:textSize="32dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/drag_handle" />
+
+        <TextView
+            android:id="@+id/idIncidencia"
+            android:layout_width="200dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/idIncidencia"
+            android:textColor="@color/texto"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tituloIncidencia" />
+
+        <TextView
+            android:id="@+id/idIncidenciaVar"
+            android:layout_width="200dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="52dp"
+            android:text="a"
+            android:textColor="@color/texto"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tituloIncidencia" />
+
+        <TextView
+            android:id="@+id/carRegistration"
+            android:layout_width="200dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/registroCoche"
+            android:textColor="@color/texto"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tituloIncidencia" />
+
+        <TextView
+            android:id="@+id/carRegistrationVar"
+            android:layout_width="200dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="12dp"
+            android:text="b"
+            android:textColor="@color/texto"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/carRegistration" />
+
+        <TextView
+            android:id="@+id/carreteraIncidencia"
+            android:layout_width="200dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/carreteraIncidencia"
+            android:textColor="@color/texto"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.036"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/carRegistrationVar" />
+
+        <TextView
+            android:id="@+id/carreteraIncidenciaVar"
+            android:layout_width="200dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="12dp"
+            android:text="c"
+            android:textColor="@color/texto"
+            android:textSize="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.037"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/carreteraIncidencia" />
+
+        <TextView
+            android:id="@+id/localidadIncidencia"
+            android:layout_width="200dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/localidadIncidencia"
+            android:textColor="@color/texto"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/idIncidenciaVar" />
+
+        <TextView
+            android:id="@+id/localidadIncidenciaVar"
+            android:layout_width="200dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="12dp"
+            android:text="d"
+            android:textColor="@color/texto"
+            android:textSize="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/localidadIncidencia" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -9,9 +9,10 @@ public class Camara {
     private String cameraRoad;
     private String kilometer;
     private String address;
+    private String imageUrl;
 
     public Camara(double latitude, double longitude, String title, String cameraId,
-                      String cameraRoad, String kilometer, String address) {
+                  String cameraRoad, String kilometer, String address, String imageUrl) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.title = title;
@@ -19,6 +20,7 @@ public class Camara {
         this.cameraRoad = cameraRoad;
         this.kilometer = kilometer;
         this.address = address;
+        this.imageUrl = imageUrl;
     }
 
     public double getLatitude() {
@@ -47,5 +49,9 @@ public class Camara {
 
     public String getAddress() {
         return address;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
     }
 }
