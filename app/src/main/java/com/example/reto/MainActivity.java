@@ -1,13 +1,18 @@
 package com.example.reto;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +48,8 @@ import org.json.JSONObject;
 import org.locationtech.proj4j.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private MapView mapView;
@@ -52,12 +59,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private ArrayList<Camara> cameraList = new ArrayList<>();
     private ArrayList<Incidencia> incidenceList = new ArrayList<>();
+    private ArrayList<Marker> allMarkers = new ArrayList<>();
 
     private int currentPageApi1 = 1;
     private int currentPageApi2 = 1;
     private boolean hasMorePagesApi1 = true;
     private boolean hasMorePagesApi2 = true;
-
+    private Set<String> cameraNamesSet = new HashSet<>();
+    private ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +82,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapView.getMapAsync(this);
 
         LinearLayout cerrarSesion = findViewById(R.id.cerrarSesion);
+
+        progressBar = findViewById(R.id.progressBar);
+        manejarProgressBar(true);
+
+
+        // Simula una tarea en segundo plano
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Oculta la ProgressBar cuando la tarea en segundo plano ha terminado
+                manejarProgressBar(false);
+            }
+        }, 5000);
+
 
         cerrarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 int id = menuItem.getItemId();
-                if (id == R.id.switch_Camaras || id == R.id.switch_Incidencias) {
+                if (id == R.id.switch_Camaras) {
                     View actionView = menuItem.getActionView();
                     Switch switchView = actionView.findViewById(R.id.switchItem);
                     switchView.setChecked(!switchView.isChecked());
@@ -111,20 +134,41 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         int duration = Toast.LENGTH_SHORT;
                         Toast toast = Toast.makeText(MainActivity.this, menuItem.getTitle() + " mostradas", duration);
                         toast.show();
+                        ocultarCamaras(true); // Mostrar cámaras
                     } else {
                         int duration = Toast.LENGTH_SHORT;
                         Toast toast = Toast.makeText(MainActivity.this, menuItem.getTitle() + " ocultas", duration);
                         toast.show();
+                        ocultarCamaras(false); // Ocultar cámaras
                     }
-                } else if (id == R.id.camList ) {
+                } else if (id == R.id.switch_Incidencias){
+                    View actionView = menuItem.getActionView();
+                    Switch switchView = actionView.findViewById(R.id.switchItem);
+                    switchView.setChecked(!switchView.isChecked());
+
+                    if (switchView.isChecked()) {
+                        int duration = Toast.LENGTH_SHORT;
+                        Toast toast = Toast.makeText(MainActivity.this, menuItem.getTitle() + " mostradas", duration);
+                        toast.show();
+                        ocultarIncidencias(true);
+                    } else {
+                        int duration = Toast.LENGTH_SHORT;
+                        Toast toast = Toast.makeText(MainActivity.this, menuItem.getTitle() + " ocultas", duration);
+                        toast.show();
+                        ocultarIncidencias(false);
+                    }
+                }else if (id == R.id.camList) {
                     Intent lista = new Intent(MainActivity.this, listaCamaras.class);
-                    lista.putExtra("titulo","Lista de Camaras:");
+                    lista.putExtra("titulo", "Lista de Camaras:");
                     lista.putExtra("cameraList", cameraList);
                     startActivity(lista);
                 } else if (id == R.id.esp || id == R.id.ing) {
                     handleLanguageOptionClick(id);
-                } else if (id == R.id.incList){
-
+                } else if (id == R.id.incList) {
+                    Intent listaIncidencias = new Intent(MainActivity.this, ListaIncidencias.class);
+                    listaIncidencias.putExtra("titulo", "Lista de Incidencias:");
+                    listaIncidencias.putExtra("incidenceList", incidenceList);
+                    startActivity(listaIncidencias);
                 } else if (id == R.id.graficos) {
                     Intent graficos = new Intent(MainActivity.this, Graficos.class);
                     startActivity(graficos);
@@ -268,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Obtener los datos del marcador
         String title = incidencia.getTitle();
         String id = incidencia.getId();
-        String coche = incidencia.getCarRegistration();
+        String coche = incidencia.getIncidenceLevel();
         String carretera = incidencia.getRoad();
         String provincia = incidencia.getProvince();
         // Puedes obtener datos adicionales del marcador utilizando la lista de cámaras e incidencias
@@ -290,11 +334,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void loadMarkersFromApi(final GoogleMap googleMap) {
-            // Primera solicitud a la API para incidencias
-            loadIncidenciasFromApi(googleMap);
+        // Primera solicitud a la API para incidencias
+        loadIncidenciasFromApi(googleMap);
 
-            // Segunda solicitud a la API para cámaras
-            loadCamarasFromApi(googleMap);
+        // Segunda solicitud a la API para cámaras
+        loadCamarasFromApi(googleMap);
     }
 
     private void loadIncidenciasFromApi(final GoogleMap googleMap) {
@@ -335,16 +379,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.incidenceicon)));
                                     Incidencia incidenceObject = new Incidencia(latitude, longitude, title, id, province, carRegistration, incidenceLevel, road, incidenceType);
                                     marker.setTag(incidenceObject);
+                                    allMarkers.add(marker);
                                     incidenceList.add(incidenceObject);
                                 }
                             }
 
                             // Asegúrate de actualizar currentPageApi1 después de procesar la respuesta
                             currentPageApi1++;
-                            Log.d("Pagina", "onResponse: "+currentPageApi1);
+                            Log.d("Pagina", "onResponse: " + currentPageApi1);
 
                             int num = 8;
-                            Log.d("Paginas Totales", "onResponse: "+num);
+                            Log.d("Paginas Totales", "onResponse: " + num);
                             if (!(num - currentPageApi1 > 0)) {
                                 hasMorePagesApi1 = false;
                                 return;
@@ -355,7 +400,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             // Realiza la siguiente solicitud de página si es necesario
                             loadIncidenciasFromApi(googleMap);
-                            Log.d("Mas paginas", "onResponse: "+hasMorePagesApi1);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -381,7 +425,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Segunda solicitud a la API para cámaras
         String apiUrl2 = "https://api.euskadi.eus/traffic/v1.0/cameras";
-        Log.d("Request OPIO", apiUrl2+"?_page="+currentPageApi2);
         JsonObjectRequest jsonObjectRequest2 = new JsonObjectRequest(
                 Request.Method.GET,
                 apiUrl2 + "?_page=" + currentPageApi2,
@@ -402,9 +445,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 double longitude = Double.parseDouble(latLng[1]);
                                 String title = camera.getString("cameraName");
                                 String cameraId = camera.getString("cameraId");
-                                String cameraRoad = camera.optString("road","");
-                                String kilometer = camera.optString("kilometer","");
-                                String address = camera.optString("address","");
+                                String cameraRoad = camera.optString("road", "");
+                                String kilometer = camera.optString("kilometer", "");
+                                String address = camera.optString("address", "");
                                 String imageUrl = camera.optString("urlImage", "");
                                 imageUrl = imageUrl.replace("http://", "https://");
                                 LatLng markerLatLng = new LatLng(latitude, longitude);
@@ -414,12 +457,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         .title(title)
                                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.camara_marker)));
                                 marker.setTag(cameraObject);
-                                Log.d("Marcador", "ID camara: "+cameraId);
-                                cameraList.add(cameraObject);
+                                if (!cameraNamesSet.contains(title)) {
+                                    // Si no es un duplicado, añádelo a la lista y al HashSet
+                                    cameraNamesSet.add(title);
+                                    allMarkers.add(marker);
+                                    Log.d("Marcador", "ID camara: " + cameraId);
+                                    cameraList.add(cameraObject);
+                                }
                             }
 
                             currentPageApi2++;
-                            Log.d("Pagina API 2", "onResponse: "+currentPageApi2);
+                            Log.d("Pagina API 2", "onResponse: " + currentPageApi2);
 
                             int num = 25;
 
@@ -427,13 +475,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 hasMorePagesApi2 = false;
                                 return;
                             }
-                            Log.d("Paginas Totales API 2", "onResponse: "+num);
+
 
                             // Verifica si hay más páginas según la información de la respuesta
 
 
                             // Realiza la siguiente solicitud de página si es necesario
-                            Log.d("Mas paginas", "onResponse: "+hasMorePagesApi2);
+                            Log.d("Mas paginas", "onResponse: " + hasMorePagesApi2);
                             loadCamarasFromApi(googleMap);
 
                         } catch (JSONException e) {
@@ -453,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         requestQueue.add(jsonObjectRequest2);
     }
 
-    public String[] convertCoordinates(double longitude, double latitude){
+    public String[] convertCoordinates(double longitude, double latitude) {
         // UTM coordinates for Zone 30T
         double easting = longitude; // Replace with your UTM easting value
         double northing = latitude; // Replace with your UTM northing value
@@ -482,6 +530,40 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         coordCamaras[1] = String.valueOf(latLonCoord.x); // Longitud
 
         return coordCamaras;
+    }
+
+    private void ocultarCamaras(boolean mostrar) {
+        for (Marker marker : allMarkers) {
+            // Verificar si la etiqueta del marcador es de tipo Camara
+            Object tag = marker.getTag();
+            if (tag instanceof Camara) {
+                marker.setVisible(mostrar);
+            }
+        }
+    }
+
+    private void ocultarIncidencias(boolean mostrar) {
+        for (Marker marker : allMarkers) {
+            // Verificar si la etiqueta del marcador es de tipo Camara
+            Object tag = marker.getTag();
+            if (tag instanceof Incidencia) {
+                marker.setVisible(mostrar);
+            }
+        }
+    }
+    private void manejarProgressBar(boolean mostrar) {
+        if (mostrar) {
+            progressBar.setVisibility(View.VISIBLE);
+
+            // Inicia la animación de la ProgressBar principal
+            ObjectAnimator anim = ObjectAnimator.ofInt(progressBar, "progress", 0, 100);
+            anim.setDuration(5000); // Duración en milisegundos
+            anim.setInterpolator(new DecelerateInterpolator());
+            anim.start();
+
+        } else {
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
 }

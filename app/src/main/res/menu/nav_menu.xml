@@ -14,12 +14,14 @@
             android:id="@+id/switch_Camaras"
             android:title="Camaras"
             android:clickable="true"
-            app:actionLayout="@layout/switch_item" />
+            app:actionLayout="@layout/switch_item"
+            android:checked="true"/>
         <item
             android:id="@+id/switch_Incidencias"
             android:title="Incidencias"
             android:clickable="true"
-            app:actionLayout="@layout/switch_item" />
+            app:actionLayout="@layout/switch_item"
+            android:checked="true"/>
     </group>
 
     <group>
