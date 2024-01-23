@@ -12,43 +12,48 @@
         style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/provincias"
+        android:layout_marginTop="32dp"
+        android:hint="@string/ano"
         android:textColorHint="@color/texto"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:endIconTint="@color/texto"
         app:boxStrokeColor="@color/texto"
-        app:hintTextColor="@color/texto">
+        app:endIconTint="@color/texto"
+        app:hintTextColor="@color/texto"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <AutoCompleteTextView
+            android:id="@+id/autoCompleteText"
             android:layout_width="392dp"
             android:layout_height="match_parent"
             android:background="@color/verdeOscuro"
             android:inputType="none"
             android:textColor="@color/texto"
-            app:simpleItems="@array/location_array" />
+            app:simpleItems="@array/year_array" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChart"
-        android:layout_width="253dp"
-        android:layout_height="270dp"
+        android:layout_width="match_parent"
+        android:layout_height="554dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/spinnerLocation"
-        app:layout_constraintVertical_bias="0.075" />
+        app:layout_constraintVertical_bias="1.0" />
 
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/barChart"
-        android:layout_width="365dp"
-        android:layout_height="347dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <TextView
+        android:id="@+id/tituloGrafico"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/texto"
+        app:layout_constraintBottom_toTopOf="@+id/pieChart"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pieChart"
-        app:layout_constraintVertical_bias="0.666" />
+        app:layout_constraintTop_toBottomOf="@+id/spinnerLocation" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
