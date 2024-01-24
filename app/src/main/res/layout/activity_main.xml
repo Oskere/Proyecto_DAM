@@ -40,13 +40,22 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent" />
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="161dp"
-            android:layout_height="156dp"
+        <View
+            android:id="@+id/clickBlockerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/azul"
+            android:visibility="gone" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieAnimationView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:visibility="invisible" />
-        <!-- Agrega esto dentro del RelativeLayout -->
+            app:lottie_autoPlay="false"
+            app:lottie_fileName="Car_animation.json"
+            app:lottie_loop="true"
+            android:visibility="gone" />
 
     </RelativeLayout>
     <!-- Sidebar desplegable -->

@@ -23,6 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -69,8 +70,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean hasMorePagesApi1 = true;
     private boolean hasMorePagesApi2 = true;
     private Set<String> cameraNamesSet = new HashSet<>();
-    private ProgressBar progressBar;
     private String username;
+    private LottieAnimationView lottieAnimationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,9 +88,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapView.getMapAsync(this);
 
         LinearLayout cerrarSesion = findViewById(R.id.cerrarSesion);
+        lottieAnimationView = findViewById(R.id.lottieAnimationView);
+        View clickBlockerView = findViewById(R.id.clickBlockerView);
 
-        progressBar = findViewById(R.id.progressBar);
-        manejarProgressBar(true);
+        manejarLottieAnimation(true);
+        clickBlockerView.setVisibility(View.VISIBLE);
 
         View headerView = navigationView.getHeaderView(0); // Obtener la vista del encabezado
 
@@ -106,7 +109,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void run() {
                 // Oculta la ProgressBar cuando la tarea en segundo plano ha terminado
-                manejarProgressBar(false);
+                manejarLottieAnimation(false);
+                clickBlockerView.setVisibility(View.GONE);
             }
         }, 5000);
 
@@ -617,18 +621,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
-    private void manejarProgressBar(boolean mostrar) {
+    private void manejarLottieAnimation(boolean mostrar) {
         if (mostrar) {
-            progressBar.setVisibility(View.VISIBLE);
-
-            // Inicia la animación de la ProgressBar principal
-            ObjectAnimator anim = ObjectAnimator.ofInt(progressBar, "progress", 0, 100);
-            anim.setDuration(5000); // Duración en milisegundos
-            anim.setInterpolator(new DecelerateInterpolator());
-            anim.start();
-
+            lottieAnimationView.setVisibility(View.VISIBLE);
+            lottieAnimationView.playAnimation();
         } else {
-            progressBar.setVisibility(View.GONE);
+            lottieAnimationView.setVisibility(View.GONE);
+            lottieAnimationView.cancelAnimation();
         }
     }
 
