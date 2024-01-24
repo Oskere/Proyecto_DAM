@@ -5,9 +5,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 import android.Manifest;
@@ -17,11 +19,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
+import org.json.JSONException;
+
+import java.io.UnsupportedEncodingException;
+
 public class Login extends AppCompatActivity {
 
     private ViewFlipper vf;
     private ImageView perfilImageView;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private LoginManager apiManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,11 +37,18 @@ public class Login extends AppCompatActivity {
 
         vf = findViewById(R.id.viewFlipper);
 
-        Button btnLogin  = findViewById(R.id.btnLogin);
-        Button btnRegistro = findViewById(R.id.registro);
-        perfilImageView = findViewById(R.id.perfilRegistro);
+        apiManager = new LoginManager(Login.this);
 
-        btnRegistro.setOnClickListener(new View.OnClickListener() {
+        Button btnLogin  = findViewById(R.id.btnLogin);
+        Button btnRegistro = findViewById(R.id.btnRegistro);
+        Button registroLogin = findViewById(R.id.registro);
+        perfilImageView = findViewById(R.id.perfilRegistro);
+        TextView inputUsuario = findViewById(R.id.inputUsuarioText);
+        TextView inputContra = findViewById(R.id.inputContraText);
+        TextView inputEmailRegistro = findViewById(R.id.inputMailRegistroTexto);
+        TextView inputUsuarioRegistro = findViewById(R.id.inputUsuarioRegistroTexto);
+        TextView inputContraRegistro = findViewById(R.id.inputContraRegistroTexto);
+        registroLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 vf.showNext();
@@ -64,12 +78,83 @@ public class Login extends AppCompatActivity {
                 vf.showNext();
             }
         });
-
+        TextView invitado = findViewById(R.id.invitado);
+        invitado.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Login.this, MainActivity.class);
+                intent.putExtra("username", "Invitado");
+                startActivity(intent);
+            }
+        });
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Login.this,MainActivity.class);
-                startActivity(intent);
+                // Aquí obtienes los datos de inicio de sesión (nombre de usuario, contraseña) desde tus elementos de interfaz
+                String username = String.valueOf(inputUsuario.getText());
+                String password = String.valueOf(inputContra.getText());
+
+                // Llamada a la API para iniciar sesión
+                try {
+                    apiManager.iniciarSesion(username, password, new LoginManager.ApiCallback() {
+                        @Override
+                        public void onSuccess(String response) {
+                            // Manejar la respuesta exitosa, por ejemplo, mostrar un mensaje
+                            Log.d("Inicio de sesión", response);
+                            Toast.makeText(Login.this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
+
+                            // Aquí puedes redirigir al usuario a la pantalla principal o realizar otras acciones
+                            Intent intent = new Intent(Login.this, MainActivity.class);
+                            intent.putExtra("username", username);
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onError(String errorMessage) {
+                            // Manejar el error, por ejemplo, mostrar un mensaje
+                            Log.e("Error en inicio de sesión", errorMessage);
+                            Toast.makeText(Login.this, "Error en inicio de sesión", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+
+        btnRegistro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Aquí obtienes los datos de usuario (nombre de usuario, correo, contraseña) desde tus elementos de interfaz
+                String username = String.valueOf(inputUsuarioRegistro.getText());
+                String email = String.valueOf(inputEmailRegistro.getText());
+                String password = String.valueOf(inputContraRegistro.getText());
+
+                // Llamada a la API para registrar al usuario
+                try {
+                    apiManager.registrarUsuario(username, email, password, new LoginManager.ApiCallback() {
+                        @Override
+                        public void onSuccess(String response) {
+                            // Manejar la respuesta exitosa, por ejemplo, mostrar un mensaje
+                            Log.d("Registro", response);
+                            Toast.makeText(Login.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+
+                            // Aquí puedes redirigir al usuario a la pantalla de inicio de sesión o realizar otras acciones
+                        }
+
+                        @Override
+                        public void onError(String errorMessage) {
+                            // Manejar el error, por ejemplo, mostrar un mensaje
+                            Log.e("Error en registro", errorMessage);
+                            Toast.makeText(Login.this, "Error en registro", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
 

@@ -20,12 +20,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.reto.Entidades.Camara;
@@ -61,18 +63,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<Incidencia> incidenceList = new ArrayList<>();
     private ArrayList<Marker> allMarkers = new ArrayList<>();
 
+    private static final String BASE_URL_LOCAL = "http://10.10.12.200:8080/api/incidencias";
     private int currentPageApi1 = 1;
     private int currentPageApi2 = 1;
     private boolean hasMorePagesApi1 = true;
     private boolean hasMorePagesApi2 = true;
     private Set<String> cameraNamesSet = new HashSet<>();
     private ProgressBar progressBar;
+    private String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        username = getIntent().getStringExtra("username");
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -85,6 +90,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         progressBar = findViewById(R.id.progressBar);
         manejarProgressBar(true);
+
+        View headerView = navigationView.getHeaderView(0); // Obtener la vista del encabezado
+
+        // Obtener referencia al TextView del encabezado
+        TextView headerTitleTextView = headerView.findViewById(R.id.header_title);
+
+        // Establecer el texto del TextView con el nombre de usuario
+        headerTitleTextView.setText(username);
+
 
 
         // Simula una tarea en segundo plano
@@ -125,6 +139,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 int id = menuItem.getItemId();
+
+                // Verificar si el nombre de usuario es "Invitado"
+                boolean isGuest = "Invitado".equals(username);
+
                 if (id == R.id.switch_Camaras) {
                     View actionView = menuItem.getActionView();
                     Switch switchView = actionView.findViewById(R.id.switchItem);
@@ -141,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         toast.show();
                         ocultarCamaras(false); // Ocultar cámaras
                     }
-                } else if (id == R.id.switch_Incidencias){
+                } else if (id == R.id.switch_Incidencias) {
                     View actionView = menuItem.getActionView();
                     Switch switchView = actionView.findViewById(R.id.switchItem);
                     switchView.setChecked(!switchView.isChecked());
@@ -157,38 +175,31 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         toast.show();
                         ocultarIncidencias(false);
                     }
-                }else if (id == R.id.camList) {
+                } else if (id == R.id.camList && !isGuest) {
                     Intent lista = new Intent(MainActivity.this, listaCamaras.class);
                     lista.putExtra("titulo", "Lista de Camaras:");
                     lista.putExtra("cameraList", cameraList);
                     startActivity(lista);
-                } else if (id == R.id.esp || id == R.id.ing) {
-                    handleLanguageOptionClick(id);
-                } else if (id == R.id.incList) {
+                } else if (id == R.id.incList && !isGuest) {
                     Intent listaIncidencias = new Intent(MainActivity.this, ListaIncidencias.class);
                     listaIncidencias.putExtra("titulo", "Lista de Incidencias:");
                     listaIncidencias.putExtra("incidenceList", incidenceList);
                     startActivity(listaIncidencias);
-                } else if (id == R.id.graficos) {
+                } else if (id == R.id.graficos && !isGuest) {
                     Intent graficos = new Intent(MainActivity.this, Graficos.class);
                     startActivity(graficos);
+                }else {
+                    // Usuario invitado intenta acceder a opción deshabilitada
+                    Toast.makeText(MainActivity.this, "Acceso denegado", Toast.LENGTH_SHORT).show();
                 }
-                // Add more conditions for other menu items
+                // Agregar más condiciones para otros elementos del menú
 
                 // Close the DrawerLayout after handling the click
-
+                drawerLayout.closeDrawer(GravityCompat.START);
 
                 return true;
             }
         });
-
-    }
-
-    private void handleLanguageOptionClick(int id) {
-
-    }
-
-    private void handleFilterOptionClick(int id) {
 
     }
 
@@ -336,7 +347,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void loadMarkersFromApi(final GoogleMap googleMap) {
         // Primera solicitud a la API para incidencias
         loadIncidenciasFromApi(googleMap);
-
+        // Solicitud a la API Local para incidencias
+        loadIncidenciasFromLocalApi(googleMap);
         // Segunda solicitud a la API para cámaras
         loadCamarasFromApi(googleMap);
     }
@@ -417,6 +429,58 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         requestQueue.add(jsonObjectRequest1);
     }
 
+    private void loadIncidenciasFromLocalApi(final GoogleMap googleMap) {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                BASE_URL_LOCAL,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            Log.d("IncidenciaMarker", "Número de incidencias: " + response.length());
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject incidence = response.getJSONObject(i);
+                                Log.d("IncidenciaMarker", "onResponse: " + incidence);
+                                double latitude = incidence.getDouble("latitude");
+                                double longitude = incidence.getDouble("longitude");
+                                String title = incidence.getString("title");
+                                String id = incidence.getString("incidenceId");
+                                String province = incidence.getString("province");
+                                String carRegistration = incidence.getString("carRegistration");
+                                String incidenceLevel = incidence.getString("incidenceLevel");
+                                String road = incidence.getString("road");
+                                String incidenceType = incidence.getString("incidenceType");
+                                LatLng markerLatLng = new LatLng(latitude, longitude);
+                                Log.d("IncidenciaMarker", "onResponse: " + markerLatLng);
+                                Marker marker = googleMap.addMarker(new MarkerOptions()
+                                        .position(markerLatLng)
+                                        .title(title)
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.incidenceicon)));
+                                Incidencia incidenceObject = new Incidencia(latitude, longitude, title, id, province, carRegistration, incidenceLevel, road, incidenceType);
+                                marker.setTag(incidenceObject);
+                                allMarkers.add(marker);
+                                Log.d("Incidencia", "onResponse: " + marker.getTitle());
+                                incidenceList.add(incidenceObject);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("API LOCAL", "Error: " + error);
+                        Toast.makeText(MainActivity.this, "Error al cargar los datos de la API Local", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // Añadir la solicitud a la cola de Volley
+        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
+        requestQueue.add(jsonArrayRequest);
+    }
+
     private void loadCamarasFromApi(final GoogleMap googleMap) {
         if (!hasMorePagesApi2) {
             // Si no hay más páginas, salir del método
@@ -443,26 +507,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 String[] latLng = convertCoordinates(utmX, utmY);
                                 double latitude = Double.parseDouble(latLng[0]);
                                 double longitude = Double.parseDouble(latLng[1]);
-                                String title = camera.getString("cameraName");
-                                String cameraId = camera.getString("cameraId");
-                                String cameraRoad = camera.optString("road", "");
-                                String kilometer = camera.optString("kilometer", "");
-                                String address = camera.optString("address", "");
-                                String imageUrl = camera.optString("urlImage", "");
-                                imageUrl = imageUrl.replace("http://", "https://");
-                                LatLng markerLatLng = new LatLng(latitude, longitude);
-                                Camara cameraObject = new Camara(latitude, longitude, title, cameraId, cameraRoad, kilometer, address, imageUrl);
-                                Marker marker = googleMap.addMarker(new MarkerOptions()
-                                        .position(markerLatLng)
-                                        .title(title)
-                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.camara_marker)));
-                                marker.setTag(cameraObject);
-                                if (!cameraNamesSet.contains(title)) {
-                                    // Si no es un duplicado, añádelo a la lista y al HashSet
-                                    cameraNamesSet.add(title);
-                                    allMarkers.add(marker);
-                                    Log.d("Marcador", "ID camara: " + cameraId);
-                                    cameraList.add(cameraObject);
+                                if (latitude > 10) {
+                                    String title = camera.getString("cameraName");
+                                    String cameraId = camera.getString("cameraId");
+                                    String cameraRoad = camera.optString("road", "");
+                                    String kilometer = camera.optString("kilometer", "");
+                                    String address = camera.optString("address", "");
+                                    String imageUrl = camera.optString("urlImage", "");
+                                    imageUrl = imageUrl.replace("http://", "https://");
+                                    LatLng markerLatLng = new LatLng(latitude, longitude);
+                                    Camara cameraObject = new Camara(latitude, longitude, title, cameraId, cameraRoad, kilometer, address, imageUrl);
+                                    Marker marker = googleMap.addMarker(new MarkerOptions()
+                                            .position(markerLatLng)
+                                            .title(title)
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.camara_marker)));
+                                    marker.setTag(cameraObject);
+                                    if (!cameraNamesSet.contains(title)) {
+                                        // Si no es un duplicado, añádelo a la lista y al HashSet
+                                        cameraNamesSet.add(title);
+                                        allMarkers.add(marker);
+                                        Log.d("Marcador", "ID camara: " + cameraId);
+                                        cameraList.add(cameraObject);
+                                    }
                                 }
                             }
 

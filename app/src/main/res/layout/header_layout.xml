@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:text="@string/invitado"
+        android:text=""
         android:textAlignment="center"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium.Inverse"
         app:layout_constraintEnd_toEndOf="parent"

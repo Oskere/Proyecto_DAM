@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ViewFlipper android:id="@+id/viewFlipper"
+<ViewFlipper xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/viewFlipper"
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="match_parent" android:layout_width="match_parent">
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/azul">
@@ -28,48 +28,52 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputUsuario"
                 android:layout_width="295dp"
-                android:layout_height="54dp"
+                android:layout_height="70dp"
                 android:hint="@string/usuario"
                 android:textColorHint="@color/texto"
+                app:boxBackgroundColor="@color/verdeClaro"
+                app:boxCornerRadiusBottomStart="21dp"
+                app:boxCornerRadiusTopEnd="21dp"
+                app:boxStrokeColor="@color/rojo"
                 app:hintTextColor="@color/texto"
                 app:layout_constraintBottom_toTopOf="@+id/inputContra"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.504"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-                app:layout_constraintVertical_bias="0.458"
-                app:boxStrokeColor="@color/rojo"
-                app:boxBackgroundColor="@color/verdeClaro"
-                app:boxCornerRadiusBottomStart="21dp"
-                app:boxCornerRadiusTopEnd="21dp">
+                app:layout_constraintVertical_bias="0.458">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputUsuarioText"
                     android:layout_width="280dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="70dp"
                     android:textColor="@color/texto" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputContra"
-                android:layout_width="295dp"
-                android:layout_height="56dp"
+                android:layout_width="299dp"
+                android:layout_height="71dp"
                 android:hint="@string/contra"
                 android:textColorHint="@color/texto"
-                app:hintTextColor="@color/texto"
+                app:boxBackgroundColor="@color/verdeClaro"
+                app:boxCornerRadiusBottomStart="21dp"
+                app:boxCornerRadiusTopEnd="21dp"
+                app:boxStrokeColor="@color/rojo"
+                app:endIconMode="password_toggle"
+                app:endIconTint="@color/texto"
                 app:layout_constraintBottom_toTopOf="@+id/btnLogin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.504"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.873"
-                app:boxStrokeColor="@color/rojo"
-                app:boxBackgroundColor="@color/verdeClaro"
-                app:boxCornerRadiusBottomStart="21dp"
-                app:boxCornerRadiusTopEnd="21dp">
+                app:layout_constraintVertical_bias="0.873">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputContraText"
                     android:layout_width="282dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="70dp"
+                    android:inputType="textPassword"
                     android:textColor="@color/texto"
                     tools:layout_editor_absoluteX="0dp"
                     tools:layout_editor_absoluteY="0dp" />
@@ -80,7 +84,7 @@
                 android:id="@+id/btnLogin"
                 android:layout_width="207dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="232dp"
+                android:layout_marginTop="212dp"
                 android:backgroundTint="@color/verdeClaro"
                 android:text="@string/login"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -135,6 +139,19 @@
                     tools:layout_editor_absoluteY="0dp" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/invitado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/invitado"
+                android:textColor="@color/texto"
+                android:textSize="22dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.502"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -194,6 +211,7 @@
                 app:layout_constraintVertical_bias="0.811">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputUsuarioRegistroTexto"
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
                     android:textColor="@color/texto" />
@@ -218,6 +236,7 @@
                 app:layout_constraintVertical_bias="0.608">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputMailRegistroTexto"
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
                     android:textColor="@color/texto" />
@@ -242,6 +261,7 @@
                 app:layout_constraintVertical_bias="0.965">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputContraRegistroTexto"
                     android:layout_width="282dp"
                     android:layout_height="wrap_content"
                     android:textColor="@color/texto"
@@ -256,7 +276,7 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="244dp"
                 android:backgroundTint="@color/verdeClaro"
-                android:text="@string/login"
+                android:text="@string/registro"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.502"
                 app:layout_constraintStart_toStartOf="parent"

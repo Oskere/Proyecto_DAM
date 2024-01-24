@@ -2,7 +2,7 @@
     <string name="app_name">reto</string>
     <string name="open">abrir</string>
     <string name="close">cerrar</string>
-    <string name="invitado">Invitado</string>
+    <string name="invitado"><i>O continua como invitado</i></string>
     <string name="contra">Contraseña</string>
     <string name="usuario">Usuario</string>
     <string name="login"><b>Inciar Sesión</b></string>
@@ -14,7 +14,7 @@
     <string name="incidencias">Incidencias</string>
     <string name="ano">Año:</string>
     <string name="idIncidencia"><b>ID de la incidencia:</b></string>
-    <string name="registroCoche"><b>Coche registrado en:</b></string>
+    <string name="registroCoche"><b>Nivel de la incidencia:</b></string>
     <string name="carreteraIncidencia"><b>Carretera Afectada:</b></string>
     <string name="localidadIncidencia"><b>Localidad de la incidencia:</b></string>
     <string name="idCamara"><b>ID de la camara: </b></string>
