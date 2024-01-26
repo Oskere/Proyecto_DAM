@@ -337,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Configurar las vistas con los datos del marcador
         titleTextView.setText(title);
         textViewCarretera.setText(carretera);
-        textViewId.setText(Math.toIntExact(id));
+        textViewId.setText(String.valueOf(id));
         textViewCoche.setText(coche);
         textViewProvincia.setText(provincia);
 
