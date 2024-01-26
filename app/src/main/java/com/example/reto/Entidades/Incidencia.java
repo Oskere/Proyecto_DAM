@@ -7,14 +7,14 @@ public class Incidencia implements Serializable {
     private double latitude;
     private double longitude;
     private String title;
-    private String id;
+    private Long id;
     private String province;
     private String carRegistration;
     private String incidenceLevel;
     private String road;
     private String incidenceType;
 
-    public Incidencia(double latitude, double longitude, String title, String id,
+    public Incidencia(double latitude, double longitude, String title, Long id,
                          String province, String carRegistration, String incidenceLevel,
                          String road, String incidenceType) {
         this.latitude = latitude;
@@ -40,7 +40,7 @@ public class Incidencia implements Serializable {
         return title;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 

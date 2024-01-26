@@ -326,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Obtener los datos del marcador
         String title = incidencia.getTitle();
-        String id = incidencia.getId();
+        Long id = incidencia.getId();
         String coche = incidencia.getIncidenceLevel();
         String carretera = incidencia.getRoad();
         String provincia = incidencia.getProvince();
@@ -337,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Configurar las vistas con los datos del marcador
         titleTextView.setText(title);
         textViewCarretera.setText(carretera);
-        textViewId.setText(id);
+        textViewId.setText(Math.toIntExact(id));
         textViewCoche.setText(coche);
         textViewProvincia.setText(provincia);
 
@@ -381,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 // Verifica si la latitud y la longitud son diferentes de 0 antes de añadir el marcador
                                 if (latitude != 0 && longitude != 0) {
                                     String title = incidence.getString("cause");
-                                    String id = incidence.getString("incidenceId");
+                                    Long id = incidence.getLong("incidenceId");
                                     String province = incidence.getString("province");
                                     String carRegistration = incidence.getString("carRegistration");
                                     String incidenceLevel = incidence.getString("incidenceLevel");
@@ -449,7 +449,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 double latitude = incidence.getDouble("latitude");
                                 double longitude = incidence.getDouble("longitude");
                                 String title = incidence.getString("title");
-                                String id = incidence.getString("incidenceId");
+                                Long id = incidence.getLong("incidenceId"); // Cambiado a Long
                                 String province = incidence.getString("province");
                                 String carRegistration = incidence.getString("carRegistration");
                                 String incidenceLevel = incidence.getString("incidenceLevel");
