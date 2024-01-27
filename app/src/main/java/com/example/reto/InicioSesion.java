@@ -23,7 +23,7 @@ import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
 
-public class Login extends AppCompatActivity {
+public class InicioSesion extends AppCompatActivity {
 
     private ViewFlipper vf;
     private ImageView perfilImageView;
@@ -37,7 +37,7 @@ public class Login extends AppCompatActivity {
 
         vf = findViewById(R.id.viewFlipper);
 
-        apiManager = new LoginManager(Login.this);
+        apiManager = new LoginManager(InicioSesion.this);
 
         Button btnLogin  = findViewById(R.id.btnLogin);
         Button btnRegistro = findViewById(R.id.btnRegistro);
@@ -82,7 +82,7 @@ public class Login extends AppCompatActivity {
         invitado.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Login.this, MainActivity.class);
+                Intent intent = new Intent(InicioSesion.this, MainActivity.class);
                 intent.putExtra("username", "Invitado");
                 startActivity(intent);
             }
@@ -101,10 +101,10 @@ public class Login extends AppCompatActivity {
                         public void onSuccess(String response) {
                             // Manejar la respuesta exitosa, por ejemplo, mostrar un mensaje
                             Log.d("Inicio de sesión", response);
-                            Toast.makeText(Login.this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(InicioSesion.this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
 
                             // Aquí puedes redirigir al usuario a la pantalla principal o realizar otras acciones
-                            Intent intent = new Intent(Login.this, MainActivity.class);
+                            Intent intent = new Intent(InicioSesion.this, MainActivity.class);
                             intent.putExtra("username", username);
                             startActivity(intent);
                         }
@@ -113,7 +113,7 @@ public class Login extends AppCompatActivity {
                         public void onError(String errorMessage) {
                             // Manejar el error, por ejemplo, mostrar un mensaje
                             Log.e("Error en inicio de sesión", errorMessage);
-                            Toast.makeText(Login.this, "Error en inicio de sesión", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(InicioSesion.this, "Error en inicio de sesión", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (UnsupportedEncodingException e) {
@@ -140,7 +140,7 @@ public class Login extends AppCompatActivity {
                         public void onSuccess(String response) {
                             // Manejar la respuesta exitosa, por ejemplo, mostrar un mensaje
                             Log.d("Registro", response);
-                            Toast.makeText(Login.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(InicioSesion.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
 
                             // Aquí puedes redirigir al usuario a la pantalla de inicio de sesión o realizar otras acciones
                         }
@@ -149,7 +149,7 @@ public class Login extends AppCompatActivity {
                         public void onError(String errorMessage) {
                             // Manejar el error, por ejemplo, mostrar un mensaje
                             Log.e("Error en registro", errorMessage);
-                            Toast.makeText(Login.this, "Error en registro", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(InicioSesion.this, "Error en registro", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } catch (JSONException e) {
