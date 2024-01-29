@@ -1,18 +1,14 @@
 package com.example.reto;
 
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -180,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         ocultarIncidencias(false);
                     }
                 } else if (id == R.id.camList && !isGuest) {
-                    Intent lista = new Intent(MainActivity.this, listaCamaras.class);
+                    Intent lista = new Intent(MainActivity.this, ListaCamaras.class);
                     lista.putExtra("titulo", "Lista de Camaras:");
                     lista.putExtra("cameraList", cameraList);
                     startActivity(lista);

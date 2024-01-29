@@ -12,10 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.reto.Entidades.Camara;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class listaCamaras extends AppCompatActivity {
+public class ListaCamaras extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +29,7 @@ public class listaCamaras extends AppCompatActivity {
         List<Camara> cameraList = (List<Camara>) intent.getSerializableExtra("cameraList");
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler);
-        cameraAdapter adapter = new cameraAdapter(this,cameraList);
+        CamaraAdapter adapter = new CamaraAdapter(this,cameraList);
         recyclerView.setAdapter(adapter);
 
 

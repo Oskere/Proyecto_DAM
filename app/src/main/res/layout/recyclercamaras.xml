@@ -7,7 +7,7 @@
         android:background="@color/verdeOscuro">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="313dp"
+            android:layout_width="match_parent"
             android:layout_height="627dp"
             android:id="@+id/recycler"
             app:layout_constraintBottom_toBottomOf="parent"

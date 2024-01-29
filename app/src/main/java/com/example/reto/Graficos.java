@@ -3,8 +3,10 @@ package com.example.reto;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,6 +78,13 @@ public class Graficos extends AppCompatActivity {
             }
         });
 
+        ImageView imageView = findViewById(R.id.imageView);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // Cerrar la actividad
+            }
+        });
     }
 
     private void makeApiRequest(final String year, final int month) {
@@ -95,7 +104,7 @@ public class Graficos extends AppCompatActivity {
                             int totalItems = response.getInt("totalItems");
 
                             // Actualizar el gráfico de queso con el número total de items y el nombre del mes
-                            updatePieChart(totalItems);
+                            updatePieChart(totalItems, month);
                         } catch (JSONException e) {
                             e.printStackTrace();
                             // Manejar error al procesar la respuesta JSON
@@ -117,7 +126,7 @@ public class Graficos extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);
     }
 
-    private void updatePieChart(int totalItems) {
+    private void updatePieChart(int totalItems, int month) {
         // Crear o actualizar la lista de entradas para el gráfico de queso
         ArrayList<PieEntry> pieEntries = new ArrayList<>();
         PieData pieData;
@@ -129,8 +138,8 @@ public class Graficos extends AppCompatActivity {
             pieEntries = new ArrayList<>(dataSet.getValues());
         }
 
-        // Agregar nueva entrada para el año actual
-        pieEntries.add(new PieEntry(totalItems, "Total"));
+        // Agregar nueva entrada para el mes actual
+        pieEntries.add(new PieEntry(totalItems, getMonthName(month)));
 
         ArrayList<Integer> colors = new ArrayList<>();
         colors.add(Color.rgb(255, 102, 0));    // Color naranja
@@ -173,6 +182,7 @@ public class Graficos extends AppCompatActivity {
             }
         });
     }
+
     private String getMonthName(int month) {
         // Puedes personalizar la obtención del nombre del mes según tus necesidades
         switch (month) {

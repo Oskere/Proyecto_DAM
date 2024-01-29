@@ -93,7 +93,7 @@ public class InicioSesion extends AppCompatActivity {
                 // Aquí obtienes los datos de inicio de sesión (nombre de usuario, contraseña) desde tus elementos de interfaz
                 String username = String.valueOf(inputUsuario.getText());
                 String password = String.valueOf(inputContra.getText());
-
+                Log.d("Username", "onClick: "+username);
                 // Llamada a la API para iniciar sesión
                 try {
                     apiManager.iniciarSesion(username, password, new LoginManager.ApiCallback() {
@@ -111,8 +111,6 @@ public class InicioSesion extends AppCompatActivity {
 
                         @Override
                         public void onError(String errorMessage) {
-                            // Manejar el error, por ejemplo, mostrar un mensaje
-                            Log.e("Error en inicio de sesión", errorMessage);
                             Toast.makeText(InicioSesion.this, "Error en inicio de sesión", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -139,7 +137,6 @@ public class InicioSesion extends AppCompatActivity {
                         @Override
                         public void onSuccess(String response) {
                             // Manejar la respuesta exitosa, por ejemplo, mostrar un mensaje
-                            Log.d("Registro", response);
                             Toast.makeText(InicioSesion.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
 
                             // Aquí puedes redirigir al usuario a la pantalla de inicio de sesión o realizar otras acciones
@@ -148,7 +145,6 @@ public class InicioSesion extends AppCompatActivity {
                         @Override
                         public void onError(String errorMessage) {
                             // Manejar el error, por ejemplo, mostrar un mensaje
-                            Log.e("Error en registro", errorMessage);
                             Toast.makeText(InicioSesion.this, "Error en registro", Toast.LENGTH_SHORT).show();
                         }
                     });
