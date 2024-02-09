@@ -36,6 +36,12 @@
             app:showAsAction="always"
             android:clickable="true"/>
         <item
+            android:id="@+id/favoritos"
+            android:title="Favoritos"
+            android:clickable="true"
+            app:showAsAction="always"
+            />
+        <item
             android:id="@+id/incList"
             android:title="Incidencias"
             app:showAsAction="always"

@@ -7,13 +7,13 @@ public class Camara implements Serializable {
     private double latitude;
     private double longitude;
     private String title;
-    private String cameraId;
+    private Long cameraId;
     private String cameraRoad;
     private String kilometer;
     private String address;
     private String imageUrl;
 
-    public Camara(double latitude, double longitude, String title, String cameraId,
+    public Camara(double latitude, double longitude, String title, Long cameraId,
                   String cameraRoad, String kilometer, String address, String imageUrl) {
         this.latitude = latitude;
         this.longitude = longitude;
@@ -37,7 +37,7 @@ public class Camara implements Serializable {
         return title;
     }
 
-    public String getCameraId() {
+    public Long getCameraId() {
         return cameraId;
     }
 

@@ -26,7 +26,7 @@ public class IncidenciaAdapter extends RecyclerView.Adapter<IncidenciaAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.item_filtro, parent, false);
+        View view = inflater.inflate(R.layout.item_filtro_incidencias, parent, false);
         return new ViewHolder(view);
     }
 
@@ -44,17 +44,19 @@ public class IncidenciaAdapter extends RecyclerView.Adapter<IncidenciaAdapter.Vi
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView nombreTextView;
         private final TextView kilometerTextView;
+        private final TextView levelTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             nombreTextView = itemView.findViewById(R.id.TextViewFiltro1);
             kilometerTextView = itemView.findViewById(R.id.TextViewFiltro2);
+            levelTextView = itemView.findViewById(R.id.textViewFiltro);
         }
 
         public void bind(Incidencia incidence) {
             nombreTextView.setText(incidence.getTitle());
             kilometerTextView.setText(incidence.getRoad());
-
+            levelTextView.setText(incidence.getIncidenceLevel());
         }
     }
 }

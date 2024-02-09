@@ -5,12 +5,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -25,22 +22,26 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mindrot.jbcrypt.BCrypt;
 
-import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CamaraAdapter extends RecyclerView.Adapter<CamaraAdapter.ViewHolder> {
-
+    private static final String API_KEY = "DAMTraficoProyecto";
     private List<Camara> cameraList;
+    private List<Camara> favList;
     private LayoutInflater inflater;
     private Context context;
+    private String username;
     private final RequestQueue requestQueue;
 
-    public CamaraAdapter(Context context, List<Camara> cameraList) {
+    public CamaraAdapter(Context context, List<Camara> cameraList, List<Camara> favList, String username) {
         this.inflater = LayoutInflater.from(context);
         this.cameraList = cameraList;
+        this.favList = favList;
         this.context = context;
+        this.username = username;
         requestQueue = Volley.newRequestQueue(context);
     }
 
@@ -79,6 +80,7 @@ public class CamaraAdapter extends RecyclerView.Adapter<CamaraAdapter.ViewHolder
         public void bind(Camara camera) {
             nombreTextView.setText(camera.getTitle());
             kilometerTextView.setText(camera.getKilometer());
+            lottieAnimationView.cancelAnimation(); // Cancelar cualquier animación previa
             // Asignar el evento onClick al nombre de la cámara
             nombreTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -92,27 +94,54 @@ public class CamaraAdapter extends RecyclerView.Adapter<CamaraAdapter.ViewHolder
             lottieAnimationView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Cambiar la dirección de la animación
-                    isAnimationPlayingForward = !isAnimationPlayingForward;
-
-                    // Actualizar la velocidad y reproducir la animación
-                    if (isAnimationPlayingForward) {
-                        // Reproducir la animación hacia adelante
-                        lottieAnimationView.setSpeed(1);
-                        guardarCamaraEnBaseDeDatos(camera);
-                    } else {
-                        // Reproducir la animación hacia atrás
+                    // Verificar el estado actual de la animación
+                    if (lottieAnimationView.getProgress() == 1f) {
+                        // Si la animación está completa (estado 1f), realizar la operación de quitar
+                        eliminarCamaraDeBaseDeDatos(camera.getCameraId());
                         lottieAnimationView.setSpeed(-2);
-                        eliminarCamaraDeBaseDeDatos(Long.parseLong(camera.getCameraId()));
+                        lottieAnimationView.playAnimation();
+                        // No es necesario cambiar la dirección o actualizar la velocidad
+                    } else {
+                        // Si la animación no está completa, cambiar la dirección y velocidad para agregar
+                        isAnimationPlayingForward = !isAnimationPlayingForward;
+                        if (isAnimationPlayingForward) {
+                            // Reproducir la animación hacia adelante
+                            lottieAnimationView.setSpeed(1);
+                            guardarCamaraEnBaseDeDatos(camera);
+                        } else {
+                            // Reproducir la animación hacia atrás
+                            lottieAnimationView.setSpeed(-2);
+                        }
+                        // Reproducir la animación
+                        lottieAnimationView.playAnimation();
                     }
-                    // Reproducir la animación
-                    lottieAnimationView.playAnimation();
-
                 }
             });
         }
+        public void configurarAnimacionFavoritos(boolean esFavorito) {
+            if (esFavorito) {
+                lottieAnimationView.setProgress(1f);
+                lottieAnimationView.setSpeed(1);
+                lottieAnimationView.playAnimation();
+            } else {
+                lottieAnimationView.setProgress(0f);
+                lottieAnimationView.setSpeed(-1);
+                lottieAnimationView.playAnimation();
+            }
+        }
     }
 
+    public boolean isCamaraFavorita(Camara camara) {
+        // Supongamos que la clase Camara tiene un método getCameraId() para obtener el ID de la cámara
+
+        for (Camara camaraFavorita : favList) {
+            if (camaraFavorita.getTitle().equals(camara.getTitle())) {
+                return true; // La cámara está en la lista de favoritos
+            }
+        }
+
+        return false; // La cámara no está en la lista de favoritos
+    }
     private void mostrarPopupDesdeAbajo(Camara camera) {
         // Crear un BottomSheetDialog personalizado con el diseño del popup
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
@@ -125,7 +154,7 @@ public class CamaraAdapter extends RecyclerView.Adapter<CamaraAdapter.ViewHolder
         TextView popupCarreteraCamaraVar = popupView.findViewById(R.id.carreteraCamaraVar);
 
         popupNombre.setText(camera.getTitle());
-        popupIdCamaraVar.setText(camera.getCameraId());
+        popupIdCamaraVar.setText(String.valueOf(camera.getCameraId()));
         popupLocalidadCamaraVar.setText(camera.getAddress());
         popupCarreteraCamaraVar.setText(camera.getCameraRoad());
 
@@ -136,15 +165,21 @@ public class CamaraAdapter extends RecyclerView.Adapter<CamaraAdapter.ViewHolder
         bottomSheetDialog.show();
     }
     private void guardarCamaraEnBaseDeDatos(Camara camara) {
-        String url = "http://10.10.12.200/api/camaras";
-
+        String url = "http://10.10.12.200:8080/api/camaras";
+        Camara cam = camara;
+        Log.d("IDD", ""+cam.getCameraId());
         // Convertir la instancia de Camara a un objeto JSON
         JSONObject jsonCamara = new JSONObject();
         try {
-            jsonCamara.put("title", camara.getTitle());
-            jsonCamara.put("kilometer", camara.getKilometer());
-            jsonCamara.put("id",camara.getCameraId());
-            jsonCamara.put("address",camara.getAddress();
+            jsonCamara.put("title", cam.getTitle());
+            jsonCamara.put("kilometer", cam.getKilometer());
+            jsonCamara.put("cameraId",cam.getCameraId());
+            jsonCamara.put("address",cam.getAddress());
+            jsonCamara.put("cameraRoad", cam.getCameraRoad());
+            jsonCamara.put("latitude", cam.getLatitude());
+            jsonCamara.put("imageUrl", cam.getImageUrl());
+            jsonCamara.put("longitude", cam.getLongitude());
+            jsonCamara.put("username", username);
 
             // Agrega otros campos según la estructura de tu entidad Camara en el backend
         } catch (JSONException e) {
@@ -163,16 +198,24 @@ public class CamaraAdapter extends RecyclerView.Adapter<CamaraAdapter.ViewHolder
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e("FAVS", "Error en la solicitud: " + error.getMessage());
+                        Log.e("FAVS", "Error en la solicitud. Código de estado: " + error);
                     }
-                });
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                // Agregar el encabezado "ApiKey" al encabezado de la solicitud
+                Map<String, String> headers = new HashMap<>();
+                headers.put("ApiKey", API_KEY);
+                return headers;
+            }
+        };
 
         // Añadir la solicitud a la cola
         requestQueue.add(request);
     }
 
     private void eliminarCamaraDeBaseDeDatos(Long camaraId) {
-        String url = "http://10.10.12.200/api/camaras/" + camaraId;  // Reemplaza con la URL correcta
+        String url = "http://10.10.12.200:8080/api/camaras/" + camaraId;
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, url, null,
                 new Response.Listener<JSONObject>() {
@@ -180,6 +223,7 @@ public class CamaraAdapter extends RecyclerView.Adapter<CamaraAdapter.ViewHolder
                     public void onResponse(JSONObject response) {
                         // Lógica para manejar la respuesta exitosa
                         // Puedes implementar un callback si lo necesitas
+                        Log.d("DELETE_SUCCESS", "Cámara eliminada exitosamente");
                     }
                 },
                 new Response.ErrorListener() {
@@ -187,8 +231,17 @@ public class CamaraAdapter extends RecyclerView.Adapter<CamaraAdapter.ViewHolder
                     public void onErrorResponse(VolleyError error) {
                         // Lógica para manejar errores
                         // Puedes implementar un callback para manejar los errores
+                        Log.e("DELETE_ERROR", "Error al eliminar cámara: " + error.toString());
                     }
-                });
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                // Agregar el encabezado "ApiKey" al encabezado de la solicitud
+                Map<String, String> headers = new HashMap<>();
+                headers.put("ApiKey", API_KEY);
+                return headers;
+            }
+        };
 
         // Añadir la solicitud a la cola
         requestQueue.add(request);

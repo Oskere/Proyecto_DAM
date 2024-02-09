@@ -27,6 +27,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity"/>
+        <activity android:name=".Favoritos"/>
         <activity android:name=".ListaCamaras"/>
         <activity android:name=".Graficos"/>
         <activity android:name=".ListaIncidencias" />

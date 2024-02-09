@@ -1,6 +1,7 @@
 package com.example.reto;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -18,6 +19,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.Request;
@@ -46,17 +49,24 @@ import org.json.JSONObject;
 
 import org.locationtech.proj4j.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+    private static final String API_KEY = "DAMTraficoProyecto";
     private MapView mapView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private static final LatLng INITIAL_POSITION = new LatLng(43.008952, -2.472580);
 
     private ArrayList<Camara> cameraList = new ArrayList<>();
+    private ArrayList<Camara> favList = new ArrayList<>();
     private ArrayList<Incidencia> incidenceList = new ArrayList<>();
     private ArrayList<Marker> allMarkers = new ArrayList<>();
 
@@ -74,7 +84,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        username = getIntent().getStringExtra("username");
+        // Obtén una referencia al SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
+
+        // Recupera el nombre de usuario
+        String username = sharedPreferences.getString("username", "default_value");
+
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -97,8 +112,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Establecer el texto del TextView con el nombre de usuario
         headerTitleTextView.setText(username);
-
-
 
         // Simula una tarea en segundo plano
         new Handler().postDelayed(new Runnable() {
@@ -179,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Intent lista = new Intent(MainActivity.this, ListaCamaras.class);
                     lista.putExtra("titulo", "Lista de Camaras:");
                     lista.putExtra("cameraList", cameraList);
+                    lista.putExtra("favList", favList);
                     startActivity(lista);
                 } else if (id == R.id.incList && !isGuest) {
                     Intent listaIncidencias = new Intent(MainActivity.this, ListaIncidencias.class);
@@ -188,7 +202,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } else if (id == R.id.graficos && !isGuest) {
                     Intent graficos = new Intent(MainActivity.this, Graficos.class);
                     startActivity(graficos);
-                }else {
+                } else if (id == R.id.favoritos && !isGuest) {
+                    // Abre la actividad Favoritos
+                    Intent favoritos = new Intent(MainActivity.this, Favoritos.class);
+                    favoritos.putExtra("favList", favList);
+                    startActivity(favoritos);
+                } else {
                     // Usuario invitado intenta acceder a opción deshabilitada
                     Toast.makeText(MainActivity.this, "Acceso denegado", Toast.LENGTH_SHORT).show();
                 }
@@ -200,7 +219,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             }
         });
-
+        favList = new ArrayList<>();
+        realizarLlamadaAPI(username);
     }
 
     @Override
@@ -220,12 +240,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         googleMap.setOnMarkerClickListener(this);
         // Realizar la solicitud a la API y añadir marcadores
         loadMarkersFromApi(googleMap);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mapView.onResume();
+        SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
+
+        // Recupera el nombre de usuario
+        String username = sharedPreferences.getString("username", "default_value");
+        favList.clear();
+        realizarLlamadaAPI(username);
     }
 
     @Override
@@ -276,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Obtener los datos del marcador
         String title = camara.getTitle();
-        String id = camara.getCameraId();
+        Long id = camara.getCameraId();
         String carretera = camara.getCameraRoad();
         String provincia = camara.getAddress();
         String imageUrl = camara.getImageUrl();
@@ -284,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         TextView titulo = view.findViewById(R.id.tituloCamara);
         titulo.setText(title);
         TextView idCam = view.findViewById(R.id.idCamaraVar);
-        idCam.setText(id);
+        idCam.setText(String.valueOf(id));
         TextView carreteraCam = view.findViewById(R.id.carreteraCamaraVar);
         carreteraCam.setText(carretera);
         TextView provinciaCam = view.findViewById(R.id.localidadCamaraVar);
@@ -358,11 +385,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Si no hay más páginas, salir del método
             return;
         }
-
-        String apiUrl1 = "https://api.euskadi.eus/traffic/v1.0/incidences";
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        LocalDate localDate = LocalDate.now();
+        String apiUrl1 = "https://api.euskadi.eus/traffic/v1.0/incidences/byDate/";
         JsonObjectRequest jsonObjectRequest1 = new JsonObjectRequest(
                 Request.Method.GET,
-                apiUrl1 + "?_page=" + currentPageApi1,
+                apiUrl1+ dtf.format(localDate) + "?_page=" + currentPageApi1,
                 null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -471,14 +499,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("API LOCAL", "Error: " + error);
-                        Toast.makeText(MainActivity.this, "Error al cargar los datos de la API Local", Toast.LENGTH_SHORT).show();
+                        // Manejar errores de la solicitud
+                        Log.e("Volley", "Error en la solicitud: " + error.toString());
                     }
-                });
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                // Agregar el encabezado "ApiKey" al encabezado de la solicitud
+                Map<String, String> headers = new HashMap<>();
+                headers.put("ApiKey", API_KEY);
+                return headers;
+            }
+        };
 
-        // Añadir la solicitud a la cola de Volley
-        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
-        requestQueue.add(jsonArrayRequest);
+        // Agregar la solicitud a la cola de Volley
+        Volley.newRequestQueue(this).add(jsonArrayRequest);
     }
 
     private void loadCamarasFromApi(final GoogleMap googleMap) {
@@ -510,13 +545,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 if (latitude > 10) {
                                     String title = camera.getString("cameraName");
                                     String cameraId = camera.getString("cameraId");
+                                    Long idCamara = Long.parseLong(cameraId);
                                     String cameraRoad = camera.optString("road", "");
                                     String kilometer = camera.optString("kilometer", "");
                                     String address = camera.optString("address", "");
                                     String imageUrl = camera.optString("urlImage", "");
                                     imageUrl = imageUrl.replace("http://", "https://");
                                     LatLng markerLatLng = new LatLng(latitude, longitude);
-                                    Camara cameraObject = new Camara(latitude, longitude, title, cameraId, cameraRoad, kilometer, address, imageUrl);
+                                    Camara cameraObject = new Camara(latitude, longitude, title, idCamara, cameraRoad, kilometer, address, imageUrl);
                                     Marker marker = googleMap.addMarker(new MarkerOptions()
                                             .position(markerLatLng)
                                             .title(title)
@@ -625,6 +661,63 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             lottieAnimationView.setVisibility(View.GONE);
             lottieAnimationView.cancelAnimation();
         }
+    }
+
+    private void realizarLlamadaAPI(String username) {
+        // URL de la API (ajusta según tu caso)
+        String apiUrl = "http://10.10.12.200:8080/api/camaras/" + username;
+        Log.d("Favoritos", "Response JSONArray: " + apiUrl);
+
+        // Crear la solicitud GET con Volley
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, apiUrl, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        // Manejar la respuesta JSON y actualizar cameraList
+                        try {
+                            if (response != null && response.length() > 0) {
+                                for (int i = 0; i < response.length(); i++) {
+                                    JSONObject camera = response.getJSONObject(i);
+                                    // Resto del código sigue igual
+                                    double longitude = camera.getDouble("longitude");
+                                    double latitude = camera.getDouble("latitude");
+                                    String title = camera.getString("title");
+                                    String cameraId = camera.getString("cameraId");
+                                    Long idCamara = Long.parseLong(cameraId);
+                                    String cameraRoad = camera.optString("road", "");
+                                    String kilometer = camera.optString("kilometer", "");
+                                    String address = camera.optString("address", "");
+                                    String imageUrl = camera.optString("urlImage", "");
+                                    Camara cameraObject = new Camara(latitude, longitude, title, idCamara, cameraRoad, kilometer, address, imageUrl);
+                                    favList.add(cameraObject);
+                                }
+                            } else {
+                                Log.d("Favoritos", "La matriz de cámaras está vacía");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.e("Favoritos", "Error al procesar la respuesta JSON: " + e.getMessage());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Manejar errores de la solicitud
+                        Log.e("Volley", "Error en la solicitud: " + error.toString());
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                // Agregar el encabezado "ApiKey" al encabezado de la solicitud
+                Map<String, String> headers = new HashMap<>();
+                headers.put("ApiKey", API_KEY);
+                return headers;
+            }
+        };
+
+        // Agregar la solicitud a la cola de Volley
+        Volley.newRequestQueue(this).add(request);
     }
 
 }

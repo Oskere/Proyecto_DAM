@@ -1,7 +1,9 @@
 package com.example.reto;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -29,15 +31,25 @@ public class InicioSesion extends AppCompatActivity {
     private ImageView perfilImageView;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private LoginManager apiManager;
+    private String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
-
-        vf = findViewById(R.id.viewFlipper);
 
         apiManager = new LoginManager(InicioSesion.this);
+
+        int orientation = getResources().getConfiguration().orientation;
+
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // Cargar recursos específicos para orientación horizontal
+            setContentView(R.layout.login_horizontal);
+            vf = findViewById(R.id.viewFlipper_horizontal);
+        } else {
+            // Cargar recursos específicos para orientación vertical
+            setContentView(R.layout.login);
+            vf = findViewById(R.id.viewFlipper);
+        }
 
         Button btnLogin  = findViewById(R.id.btnLogin);
         Button btnRegistro = findViewById(R.id.btnRegistro);
@@ -83,7 +95,7 @@ public class InicioSesion extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(InicioSesion.this, MainActivity.class);
-                intent.putExtra("username", "Invitado");
+                guardarUsuarioyEmailEnSharedPreferences("invitado",null);
                 startActivity(intent);
             }
         });
@@ -98,14 +110,16 @@ public class InicioSesion extends AppCompatActivity {
                 try {
                     apiManager.iniciarSesion(username, password, new LoginManager.ApiCallback() {
                         @Override
-                        public void onSuccess(String response) {
+                        public void onSuccess(String response,String email) {
                             // Manejar la respuesta exitosa, por ejemplo, mostrar un mensaje
                             Log.d("Inicio de sesión", response);
+                            Log.d("Inicio de sesión", "Email: " + email);
                             Toast.makeText(InicioSesion.this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
+
+                            guardarUsuarioyEmailEnSharedPreferences(username,email);
 
                             // Aquí puedes redirigir al usuario a la pantalla principal o realizar otras acciones
                             Intent intent = new Intent(InicioSesion.this, MainActivity.class);
-                            intent.putExtra("username", username);
                             startActivity(intent);
                         }
 
@@ -135,17 +149,23 @@ public class InicioSesion extends AppCompatActivity {
                 try {
                     apiManager.registrarUsuario(username, email, password, new LoginManager.ApiCallback() {
                         @Override
-                        public void onSuccess(String response) {
+                        public void onSuccess(String response, String email) {
                             // Manejar la respuesta exitosa, por ejemplo, mostrar un mensaje
                             Toast.makeText(InicioSesion.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
-
+                            vf.showNext();
                             // Aquí puedes redirigir al usuario a la pantalla de inicio de sesión o realizar otras acciones
                         }
 
                         @Override
                         public void onError(String errorMessage) {
                             // Manejar el error, por ejemplo, mostrar un mensaje
-                            Toast.makeText(InicioSesion.this, "Error en registro", Toast.LENGTH_SHORT).show();
+                            Log.d("ERRORREGISTRO", "onError: "+errorMessage);
+                            if (errorMessage == null) {
+                                Toast.makeText(InicioSesion.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
+                                vf.showNext();
+                            } else {
+                                Toast.makeText(InicioSesion.this, "Error en registro", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
                 } catch (JSONException e) {
@@ -187,5 +207,21 @@ public class InicioSesion extends AppCompatActivity {
                 Toast.makeText(this, "Permiso de cámara denegado", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    private void guardarUsuarioyEmailEnSharedPreferences(String username,String email) {
+        // Obtiene la instancia de SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
+
+        // Obtiene el editor de SharedPreferences
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        // Almacena el nombre de usuario
+        editor.putString("username", username);
+        editor.putString("email",email);
+        Log.d("USEREMAIL", "guardarUsuarioyEmailEnSharedPreferences: "+email);
+
+        // Aplica los cambios
+        editor.apply();
     }
 }
