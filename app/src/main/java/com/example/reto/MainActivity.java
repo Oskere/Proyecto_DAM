@@ -484,7 +484,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     String cameraRoad = camera.optString("road", "");
                                     String kilometer = camera.optString("kilometer", "");
                                     String address = camera.optString("address", "");
-                                    String imageUrl = camera.optString("urlImage", "");
+                                    String imageUrl = camera.optString("urlImage", "https://distribuidoraindustrial.vrsoftperu.com/logo/imagen-no-disponible.jpg");
                                     imageUrl = imageUrl.replace("http://", "https://");
                                     LatLng markerLatLng = new LatLng(latitude, longitude);
                                     Camara cameraObject = new Camara(latitude, longitude, title, idCamara, cameraRoad, kilometer, address, imageUrl);
