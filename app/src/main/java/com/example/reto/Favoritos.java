@@ -41,7 +41,6 @@ public class Favoritos extends AppCompatActivity {
         TextView titulo = findViewById(R.id.tituloLista);
         titulo.setText("Favoritos:");
 
-        // Crear datos de ejemplo
         cameraList = (List<Camara>) intent.getSerializableExtra("favList");
 
         Log.d("LISTAFAV", ""+cameraList);
@@ -51,19 +50,16 @@ public class Favoritos extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
 
-        // Configurar el RecyclerView y el adaptador
         recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
 
-        // Agregar un OnClickListener al ImageView
         ImageView imageView = findViewById(R.id.imageView);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Acciones que deseas realizar cuando se hace clic en la imagen
-                finish(); // Finalizar la actividad
+                finish();
             }
         });
     }

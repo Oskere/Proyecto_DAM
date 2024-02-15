@@ -42,11 +42,9 @@ public class InicioSesion extends AppCompatActivity {
         int orientation = getResources().getConfiguration().orientation;
 
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // Cargar recursos específicos para orientación horizontal
             setContentView(R.layout.login_horizontal);
             vf = findViewById(R.id.viewFlipper_horizontal);
         } else {
-            // Cargar recursos específicos para orientación vertical
             setContentView(R.layout.login);
             vf = findViewById(R.id.viewFlipper);
         }
@@ -81,7 +79,6 @@ public class InicioSesion extends AppCompatActivity {
             }
         });
 
-        // Repite el proceso para los botones de la segunda vista si es necesario
         Button btnLoginRegistro = findViewById(R.id.loginRegistro);
 
         btnLoginRegistro.setOnClickListener(new View.OnClickListener() {
@@ -102,23 +99,19 @@ public class InicioSesion extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Aquí obtienes los datos de inicio de sesión (nombre de usuario, contraseña) desde tus elementos de interfaz
                 String username = String.valueOf(inputUsuario.getText());
                 String password = String.valueOf(inputContra.getText());
                 Log.d("Username", "onClick: "+username);
-                // Llamada a la API para iniciar sesión
                 try {
                     apiManager.iniciarSesion(username, password, new LoginManager.ApiCallback() {
                         @Override
                         public void onSuccess(String response,String email) {
-                            // Manejar la respuesta exitosa, por ejemplo, mostrar un mensaje
                             Log.d("Inicio de sesión", response);
                             Log.d("Inicio de sesión", "Email: " + email);
                             Toast.makeText(InicioSesion.this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
 
                             guardarUsuarioyEmailEnSharedPreferences(username,email);
 
-                            // Aquí puedes redirigir al usuario a la pantalla principal o realizar otras acciones
                             Intent intent = new Intent(InicioSesion.this, MainActivity.class);
                             startActivity(intent);
                         }
@@ -140,25 +133,20 @@ public class InicioSesion extends AppCompatActivity {
         btnRegistro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Aquí obtienes los datos de usuario (nombre de usuario, correo, contraseña) desde tus elementos de interfaz
                 String username = String.valueOf(inputUsuarioRegistro.getText());
                 String email = String.valueOf(inputEmailRegistro.getText());
                 String password = String.valueOf(inputContraRegistro.getText());
 
-                // Llamada a la API para registrar al usuario
                 try {
                     apiManager.registrarUsuario(username, email, password, new LoginManager.ApiCallback() {
                         @Override
                         public void onSuccess(String response, String email) {
-                            // Manejar la respuesta exitosa, por ejemplo, mostrar un mensaje
                             Toast.makeText(InicioSesion.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
                             vf.showNext();
-                            // Aquí puedes redirigir al usuario a la pantalla de inicio de sesión o realizar otras acciones
                         }
 
                         @Override
                         public void onError(String errorMessage) {
-                            // Manejar el error, por ejemplo, mostrar un mensaje
                             Log.d("ERRORREGISTRO", "onError: "+errorMessage);
                             if (errorMessage == null) {
                                 Toast.makeText(InicioSesion.this, "Registro exitoso", Toast.LENGTH_SHORT).show();
@@ -183,11 +171,9 @@ public class InicioSesion extends AppCompatActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
 
-            // Crear un drawable redondeado
             RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), imageBitmap);
             roundedBitmapDrawable.setCircular(true);
 
-            // Establecer la imagen en el ImageView
             perfilImageView.setImageDrawable(roundedBitmapDrawable);
         }
     }
@@ -210,18 +196,14 @@ public class InicioSesion extends AppCompatActivity {
     }
 
     private void guardarUsuarioyEmailEnSharedPreferences(String username,String email) {
-        // Obtiene la instancia de SharedPreferences
         SharedPreferences sharedPreferences = getSharedPreferences("UsuarioPrefs", MODE_PRIVATE);
 
-        // Obtiene el editor de SharedPreferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        // Almacena el nombre de usuario
         editor.putString("username", username);
         editor.putString("email",email);
         Log.d("USEREMAIL", "guardarUsuarioyEmailEnSharedPreferences: "+email);
 
-        // Aplica los cambios
         editor.apply();
     }
 }

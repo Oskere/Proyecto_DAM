@@ -9,15 +9,10 @@
     android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
-    <!-- Contenedor principal -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <!-- Google MapView -->
-
-        <!-- Botón de hamburguesa en la barra de acción -->
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapView"
             class="com.google.android.gms.maps.MapView"
@@ -79,8 +74,6 @@
             android:layout_gravity="bottom"
             android:id="@+id/cerrarSesion"
             android:orientation="horizontal">
-
-            <!-- Horizontal line using ConstraintLayout -->
             <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -88,13 +81,11 @@
                 android:background="@color/azul"
                 xmlns:android="http://schemas.android.com/apk/res/android">
 
-                <!-- ImageView -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/rojo"
                     app:layout_constraintTop_toTopOf="parent"/>
-                <!-- TextView -->
 
                 <ImageView
                     android:id="@+id/imageView"
@@ -124,11 +115,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.039" />
 
-                <!-- Add more views for your footer if needed -->
-
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </LinearLayout>
-
     </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>

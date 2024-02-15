@@ -14,9 +14,6 @@
         android:backgroundTint="@color/verdeClaro"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-        <!-- Drag handle for accessibility -->
-
-        <!-- Bottom sheet contents. -->
         <com.google.android.material.bottomsheet.BottomSheetDragHandleView
             android:id="@+id/drag_handle"
             android:layout_width="match_parent"

@@ -6,13 +6,11 @@
     android:background="@color/azul"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- ImageView -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/rojo"
         app:layout_constraintTop_toTopOf="parent"/>
-    <!-- TextView -->
 
     <ImageView
         android:id="@+id/imageView"
@@ -41,7 +39,5 @@
         app:layout_constraintStart_toEndOf="@id/imageView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.039" />
-
-    <!-- Add more views for your footer if needed -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

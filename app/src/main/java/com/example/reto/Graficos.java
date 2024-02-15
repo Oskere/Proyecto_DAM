@@ -45,34 +45,25 @@ public class Graficos extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layoutgraficos);
 
-        // Configuración del gráfico de queso (PieChart)
         pieChart = findViewById(R.id.pieChart);
 
         tituloGrafico = findViewById(R.id.tituloGrafico);
         TextInputLayout textInputLayout = findViewById(R.id.spinnerLocation);
         autoCompleteTextView = textInputLayout.findViewById(R.id.autoCompleteText);
 
-        // Inicializar la cola de solicitudes de Volley
         requestQueue = Volley.newRequestQueue(this);
 
-        // Obtener el array de años desde los recursos
         String[] yearArray = getResources().getStringArray(R.array.year_array);
 
-        // Crear un ArrayAdapter usando el array de años y un diseño predeterminado del sistema
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, yearArray);
 
-        // Establecer el diseño para las opciones del AutoCompleteTextView
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        // Establecer el adaptador en el AutoCompleteTextView
         autoCompleteTextView.setAdapter(adapter);
 
-        // Agregar un listener al AutoCompleteTextView para detectar cambios en la selección del año
         autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
-            // Obtener el año seleccionado
             String selectedYearString = autoCompleteTextView.getText().toString();
             pieChart.clear();
-            // Realizar llamada a la API para el año seleccionado
             for (int month = 1; month <= 12; month++) {
                 makeApiRequest(selectedYearString, month);
             }
@@ -82,16 +73,14 @@ public class Graficos extends AppCompatActivity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish(); // Cerrar la actividad
+                finish();
             }
         });
     }
 
     private void makeApiRequest(final String year, final int month) {
-        // Construir la URL de la API para el año y mes actual
         String url = baseUrl + year + "/" + month;
 
-        // Realizar la solicitud JSON a la API
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
@@ -100,14 +89,10 @@ public class Graficos extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            // Obtener el valor de "totalItems" directamente
                             int totalItems = response.getInt("totalItems");
-
-                            // Actualizar el gráfico de queso con el número total de items y el nombre del mes
                             updatePieChart(totalItems, month);
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            // Manejar error al procesar la respuesta JSON
                             Toast.makeText(Graficos.this, "Error al procesar la respuesta JSON", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -115,76 +100,67 @@ public class Graficos extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Manejar error de la solicitud
                         Log.d("GRAFICOSSS", error.toString());
                         Toast.makeText(Graficos.this, "Error de solicitud", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
 
-        // Agregar la solicitud a la cola
         requestQueue.add(jsonObjectRequest);
     }
 
     private void updatePieChart(int totalItems, int month) {
-        // Crear o actualizar la lista de entradas para el gráfico de queso
         ArrayList<PieEntry> pieEntries = new ArrayList<>();
         PieData pieData;
 
-        // Obtener datos existentes del gráfico
         if (pieChart.getData() != null && pieChart.getData().getDataSetCount() > 0) {
             pieData = pieChart.getData();
             PieDataSet dataSet = (PieDataSet) pieData.getDataSetByIndex(0);
             pieEntries = new ArrayList<>(dataSet.getValues());
         }
 
-        // Agregar nueva entrada para el mes actual
         pieEntries.add(new PieEntry(totalItems, getMonthName(month)));
 
         ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(Color.rgb(255, 102, 0));    // Color naranja
-        colors.add(Color.rgb(255, 204, 51));   // Color amarillo
-        colors.add(Color.rgb(125, 255, 51));   // Color verde claro
-        colors.add(Color.rgb(51, 255, 51));    // Color verde
-        colors.add(Color.rgb(0, 102, 204));    // Color azul medio
-        colors.add(Color.rgb(51, 51, 255));    // Color azul
-        colors.add(Color.rgb(153, 51, 255));   // Color púrpura
-        colors.add(Color.rgb(255, 51, 204));   // Color rosa
-        colors.add(Color.rgb(102, 0, 102));    // Color morado oscuro
-        colors.add(Color.rgb(255, 0, 0));      // Color rojo
-        colors.add(Color.rgb(0, 204, 204));    // Color cian claro
-        colors.add(Color.rgb(255, 204, 0));    // Amarillo más oscuro
+        colors.add(Color.rgb(255, 102, 0));
+        colors.add(Color.rgb(255, 204, 51));
+        colors.add(Color.rgb(125, 255, 51));
+        colors.add(Color.rgb(51, 255, 51));
+        colors.add(Color.rgb(0, 102, 204));
+        colors.add(Color.rgb(51, 51, 255));
+        colors.add(Color.rgb(153, 51, 255));
+        colors.add(Color.rgb(255, 51, 204));
+        colors.add(Color.rgb(102, 0, 102));
+        colors.add(Color.rgb(255, 0, 0));
+        colors.add(Color.rgb(0, 204, 204));
+        colors.add(Color.rgb(255, 204, 0));
 
         PieDataSet pieDataSet = new PieDataSet(pieEntries, "Grafico de Incidencias del año " + autoCompleteTextView.getText().toString());
         pieDataSet.setValueTextSize(12f);
-        pieDataSet.setColors(colors);  // Asignar colores a las entradas
+        pieDataSet.setColors(colors);
         pieChart.setDrawSliceText(false);
         pieChart.setDescription(null);
-        pieDataSet.setValueTextColor(getResources().getColor(R.color.texto)); // Color del texto
+        pieDataSet.setValueTextColor(getResources().getColor(R.color.texto));
         pieData = new PieData(pieDataSet);
         pieChart.setDrawEntryLabels(false);
         pieChart.setData(pieData);
-        pieChart.getLegend().setEnabled(false);  // Desactivar la leyenda
+        pieChart.getLegend().setEnabled(false);
         pieChart.invalidate();
         pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
-                // Aquí puedes obtener información sobre la Slice seleccionada
                 PieEntry pieEntry = (PieEntry) e;
 
-                // Muestra el texto de la Slice seleccionada (puedes usar un Toast u otra interfaz de usuario)
                 Toast.makeText(Graficos.this, pieEntry.getLabel(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onNothingSelected() {
-                // Acciones cuando no se selecciona ninguna Slice
             }
         });
     }
 
     private String getMonthName(int month) {
-        // Puedes personalizar la obtención del nombre del mes según tus necesidades
         switch (month) {
             case 1: return "Enero";
             case 2: return "Febrero";

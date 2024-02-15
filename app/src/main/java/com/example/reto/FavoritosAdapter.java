@@ -83,16 +83,12 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
             lottieAnimationView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Verificar si la animación ya se reprodujo
                     if (!isAnimationPlayed) {
-                        // Cambiar la dirección de la animación
                         isAnimationPlayed = true;
 
-                        // Actualizar la velocidad
                         lottieAnimationView.setSpeed(-8);
                         eliminarCamaraDeBaseDeDatos(camera.getCameraId());
 
-                        // Reproducir la animación
                         lottieAnimationView.playAnimation();
                         removeCamera(camera);
 
@@ -109,38 +105,30 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        // Lógica para manejar la respuesta exitosa
-                        // Puedes implementar un callback si lo necesitas
                         Log.d("DELETE_SUCCESS", "Cámara eliminada exitosamente");
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // Lógica para manejar errores
-                        // Puedes implementar un callback para manejar los errores
                         Log.e("DELETE_ERROR", "Error al eliminar cámara: " + error.toString());
                     }
                 }) {
             @Override
             public Map<String, String> getHeaders() {
-                // Agregar el encabezado "ApiKey" al encabezado de la solicitud
                 Map<String, String> headers = new HashMap<>();
                 headers.put("ApiKey", API_KEY);
                 return headers;
             }
         };
 
-        // Añadir la solicitud a la cola
         requestQueue.add(request);
     }
 
     private void mostrarPopupDesdeAbajo(Camara camera) {
-        // Crear un BottomSheetDialog personalizado con el diseño del popup
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
         View popupView = inflater.inflate(R.layout.camara_menu, null);
 
-        // Configurar los elementos del popup con la información de la cámara
         TextView popupNombre = popupView.findViewById(R.id.tituloCamara);
         TextView popupIdCamaraVar = popupView.findViewById(R.id.idCamaraVar);
         TextView popupLocalidadCamaraVar = popupView.findViewById(R.id.localidadCamaraVar);
@@ -151,9 +139,6 @@ public class FavoritosAdapter extends RecyclerView.Adapter<FavoritosAdapter.View
         popupLocalidadCamaraVar.setText(camera.getAddress());
         popupCarreteraCamaraVar.setText(camera.getCameraRoad());
 
-        // Puedes agregar más configuraciones según los elementos en el popup_camara.xml
-
-        // Agregar el popupView al BottomSheetDialog y mostrarlo
         bottomSheetDialog.setContentView(popupView);
         bottomSheetDialog.show();
     }

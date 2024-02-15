@@ -9,9 +9,6 @@
         android:layout_height="match_parent"
         android:background="@color/azul">
 
-        <!-- Your layout file -->
-
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="418dp"
             android:layout_height="532dp"
@@ -21,9 +18,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/perfil"
             tools:ignore="MissingConstraints">
-
-            <!-- Your existing UI elements -->
-
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputUsuario"
@@ -176,9 +170,6 @@
         android:layout_height="match_parent"
         android:background="@color/azul">
 
-        <!-- Your layout file -->
-
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="418dp"
             android:layout_height="532dp"
@@ -188,9 +179,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/perfilRegistro"
             tools:ignore="MissingConstraints">
-
-            <!-- Your existing UI elements -->
-
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/inputUsuarioRegistro"
