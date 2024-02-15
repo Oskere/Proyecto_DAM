@@ -253,6 +253,8 @@
                 app:boxCornerRadiusTopEnd="21dp"
                 app:boxStrokeColor="@color/rojo"
                 app:hintTextColor="@color/texto"
+                app:endIconMode="password_toggle"
+                app:endIconTint="@color/texto"
                 app:layout_constraintBottom_toTopOf="@+id/btnRegistro"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.504"
@@ -265,6 +267,7 @@
                     android:layout_width="282dp"
                     android:layout_height="wrap_content"
                     android:textColor="@color/texto"
+                    android:inputType="textPassword"
                     tools:layout_editor_absoluteX="0dp"
                     tools:layout_editor_absoluteY="0dp" />
 
