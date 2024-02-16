@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         TextView headerTitleTextView = headerView.findViewById(R.id.header_title);
 
         headerTitleTextView.setText(username);
+        Log.d("isguest", "onCreate: "+username);
 
 
         new Handler().postDelayed(new Runnable() {
@@ -143,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 int id = menuItem.getItemId();
 
-                boolean isGuest = "Invitado".equals(username);
+                boolean isGuest = "invitado".equals(username);
 
                 if (id == R.id.switch_Camaras) {
                     View actionView = menuItem.getActionView();

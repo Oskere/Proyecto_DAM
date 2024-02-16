@@ -4,21 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/verdeClaro">
+    android:background="@color/verdeOscuro">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/standard_bottom_sheet"
         style="@style/Widget.Material3.BottomSheet"
         android:layout_width="match_parent"
         android:layout_height="562dp"
-        android:backgroundTint="@color/verdeClaro"
+        android:backgroundTint="@color/verdeOscuro"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <com.google.android.material.bottomsheet.BottomSheetDragHandleView
             android:id="@+id/drag_handle"
             android:layout_width="match_parent"
             android:layout_height="59dp"
-            android:background="@color/verdeClaro"
+            android:background="@color/verdeOscuro"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -131,7 +131,7 @@
             android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:backgroundTint="@color/verdeClaro"
+            android:backgroundTint="@color/verdeOscuro"
             app:layout_constraintTop_toBottomOf="@+id/imagenCamara" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
